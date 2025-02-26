@@ -9,15 +9,30 @@
 /* Begin PBXBuildFile section */
 		B1D000972D6F0CE000E3B33C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000962D6F0CE000E3B33C /* GoogleSignIn */; };
 		B1D000992D6F0CE000E3B33C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000982D6F0CE000E3B33C /* GoogleSignInSwift */; };
+		B1D000BA2D6F37E600E3B33C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000B92D6F37E600E3B33C /* FirebaseAuth */; };
+		B1D000BC2D6F37E600E3B33C /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000BB2D6F37E600E3B33C /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9B1D16EA2D620B1B006691D7 /* FoodVisor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodVisor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVisor" folder in "FoodVisor" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 9B1D16E92D620B1B006691D7 /* FoodVisor */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9B1D16EC2D620B1B006691D7 /* FoodVisor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVisor" folder in "FoodVisor" target */,
+			);
 			path = FoodVisor;
 			sourceTree = "<group>";
 		};
@@ -29,6 +44,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1D000972D6F0CE000E3B33C /* GoogleSignIn in Frameworks */,
+				B1D000BA2D6F37E600E3B33C /* FirebaseAuth in Frameworks */,
+				B1D000BC2D6F37E600E3B33C /* FirebaseCore in Frameworks */,
 				B1D000992D6F0CE000E3B33C /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +91,8 @@
 			packageProductDependencies = (
 				B1D000962D6F0CE000E3B33C /* GoogleSignIn */,
 				B1D000982D6F0CE000E3B33C /* GoogleSignInSwift */,
+				B1D000B92D6F37E600E3B33C /* FirebaseAuth */,
+				B1D000BB2D6F37E600E3B33C /* FirebaseCore */,
 			);
 			productName = FoodVisor;
 			productReference = 9B1D16EA2D620B1B006691D7 /* FoodVisor.app */;
@@ -268,6 +287,7 @@
 				DEVELOPMENT_TEAM = CU8PLW354C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FoodVisor/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -297,6 +317,7 @@
 				DEVELOPMENT_TEAM = CU8PLW354C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FoodVisor/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -367,6 +388,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B1D000952D6F0CE000E3B33C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		B1D000B92D6F37E600E3B33C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1D000AA2D6F1AAA00E3B33C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B1D000BB2D6F37E600E3B33C /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1D000AA2D6F1AAA00E3B33C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

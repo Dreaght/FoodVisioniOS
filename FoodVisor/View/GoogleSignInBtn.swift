@@ -40,8 +40,8 @@ struct GoogleSignInBtn: View {
        }
    }
 
-   struct GoogleSignInBtn_Previews: PreviewProvider {
-       static var previews: some View {
-           GoogleSignInBtn(action: {})
-       }
-   }
+#Preview {
+    GoogleSignInBtn(action: {
+        print("button pressed")
+    })
+}

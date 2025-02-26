@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import Firebase
+import GoogleSignIn
+import FirebaseAuth
 
 struct LoginScreen: View {
     var body: some View {
@@ -14,7 +17,9 @@ struct LoginScreen: View {
             LoginHeader().padding(.bottom)
             
             GoogleSignInBtn {
-                // TODO: - Call the sign method here
+                FireAuth.share.signinWithGoogle(presenting: getRootViewController()) {error in
+                    print("ERROR: \(error)" )
+                }
             }
             Spacer()
         }
