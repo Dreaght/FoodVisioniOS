@@ -18,7 +18,7 @@ struct LoginScreen: View {
             
             GoogleSignInBtn {
                 FireAuth.share.signinWithGoogle(presenting: getRootViewController()) {error in
-                    print("ERROR: \(error)" )
+                    print("ERROR: \(String(describing: error))" )
                 }
             }
             Spacer()
