@@ -14,26 +14,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9B1D16EA2D620B1B006691D7 /* FoodVisor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodVisor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B1D16EA2D620B1B006691D7 /* FoodVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVisor" folder in "FoodVisor" target */ = {
+		B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVision" folder in "FoodVision" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 9B1D16E92D620B1B006691D7 /* FoodVisor */;
+			target = 9B1D16E92D620B1B006691D7 /* FoodVision */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9B1D16EC2D620B1B006691D7 /* FoodVisor */ = {
+		9B1D16EC2D620B1B006691D7 /* FoodVision */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVisor" folder in "FoodVisor" target */,
+				B1D000BE2D6F3A7900E3B33C /* Exceptions for "FoodVision" folder in "FoodVision" target */,
 			);
-			path = FoodVisor;
+			path = FoodVision;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -56,7 +56,7 @@
 		9B1D16E12D620B1B006691D7 = {
 			isa = PBXGroup;
 			children = (
-				9B1D16EC2D620B1B006691D7 /* FoodVisor */,
+				9B1D16EC2D620B1B006691D7 /* FoodVision */,
 				9B1D16EB2D620B1B006691D7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,7 +64,7 @@
 		9B1D16EB2D620B1B006691D7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9B1D16EA2D620B1B006691D7 /* FoodVisor.app */,
+				9B1D16EA2D620B1B006691D7 /* FoodVision.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,9 +72,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9B1D16E92D620B1B006691D7 /* FoodVisor */ = {
+		9B1D16E92D620B1B006691D7 /* FoodVision */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B1D16F82D620B1C006691D7 /* Build configuration list for PBXNativeTarget "FoodVisor" */;
+			buildConfigurationList = 9B1D16F82D620B1C006691D7 /* Build configuration list for PBXNativeTarget "FoodVision" */;
 			buildPhases = (
 				9B1D16E62D620B1B006691D7 /* Sources */,
 				9B1D16E72D620B1B006691D7 /* Frameworks */,
@@ -85,9 +85,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9B1D16EC2D620B1B006691D7 /* FoodVisor */,
+				9B1D16EC2D620B1B006691D7 /* FoodVision */,
 			);
-			name = FoodVisor;
+			name = FoodVision;
 			packageProductDependencies = (
 				B1D000962D6F0CE000E3B33C /* GoogleSignIn */,
 				B1D000982D6F0CE000E3B33C /* GoogleSignInSwift */,
@@ -95,7 +95,7 @@
 				B1D000BB2D6F37E600E3B33C /* FirebaseCore */,
 			);
 			productName = FoodVisor;
-			productReference = 9B1D16EA2D620B1B006691D7 /* FoodVisor.app */;
+			productReference = 9B1D16EA2D620B1B006691D7 /* FoodVision.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -113,7 +113,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9B1D16E52D620B1B006691D7 /* Build configuration list for PBXProject "FoodVisor" */;
+			buildConfigurationList = 9B1D16E52D620B1B006691D7 /* Build configuration list for PBXProject "FoodVision" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -131,7 +131,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9B1D16E92D620B1B006691D7 /* FoodVisor */,
+				9B1D16E92D620B1B006691D7 /* FoodVision */,
 			);
 		};
 /* End PBXProject section */
@@ -283,11 +283,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"FoodVisor/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"FoodVision/Preview Content\"";
 				DEVELOPMENT_TEAM = CU8PLW354C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FoodVisor/Info.plist;
+				INFOPLIST_FILE = FoodVision/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -313,11 +313,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"FoodVisor/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"FoodVision/Preview Content\"";
 				DEVELOPMENT_TEAM = CU8PLW354C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FoodVisor/Info.plist;
+				INFOPLIST_FILE = FoodVision/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -339,7 +339,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9B1D16E52D620B1B006691D7 /* Build configuration list for PBXProject "FoodVisor" */ = {
+		9B1D16E52D620B1B006691D7 /* Build configuration list for PBXProject "FoodVision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B1D16F62D620B1C006691D7 /* Debug */,
@@ -348,7 +348,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B1D16F82D620B1C006691D7 /* Build configuration list for PBXNativeTarget "FoodVisor" */ = {
+		9B1D16F82D620B1C006691D7 /* Build configuration list for PBXNativeTarget "FoodVision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B1D16F92D620B1C006691D7 /* Debug */,
