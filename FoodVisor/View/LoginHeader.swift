@@ -14,8 +14,6 @@ struct LoginHeader: View {
                 .font(.title)
                 .fontWeight(.medium)
                 .padding()
-            Text("Sign-in Options:")
-                .multilineTextAlignment(.center)
         }
     }
 }
