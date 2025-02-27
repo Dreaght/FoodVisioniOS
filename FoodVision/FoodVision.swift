@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct SignInUsingGoogleApp: App {
+struct FoodVision: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("signIn") var isSignIn = false
     
@@ -17,7 +17,7 @@ struct SignInUsingGoogleApp: App {
             if !isSignIn {
                 LoginScreen()
             } else {
-                Home()
+                NavBar()
             }
         }
     }

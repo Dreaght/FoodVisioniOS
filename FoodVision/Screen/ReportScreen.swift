@@ -1,15 +1,13 @@
-//
-//  ReportScreen.swift
-//  FoodVision
-//
-//  Created by Tracy Chan on 2025-02-27.
-//
-
 import SwiftUI
 
 struct ReportScreen: View {
     var body: some View {
-        Text("Report page.")
+        VStack {
+            Text("ReportScreen")
+                .font(.title)
+                .padding()
+        }
+        .navigationTitle("ReportScreen") // This adds a title in the NavigationStack
     }
 }
 

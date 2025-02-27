@@ -1,16 +1,16 @@
 import SwiftUI
 
-struct ChatBot: View {
+struct Diary: View {
     var body: some View {
         VStack {
-            Text("ChatBot")
+            Text("Diary")
                 .font(.title)
                 .padding()
         }
-        .navigationTitle("ChatBot") // This adds a title in the NavigationStack
+        .navigationTitle("Diary") // This adds a title in the NavigationStack
     }
 }
 
 #Preview {
-    ChatBot()
+    Diary()
 }
