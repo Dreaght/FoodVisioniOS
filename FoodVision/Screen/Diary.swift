@@ -7,7 +7,7 @@ struct Diary: View {
                 .font(.title)
                 .padding()
         }
-        .navigationTitle("Diary") // This adds a title in the NavigationStack
+        .navigationTitle("Diary")
     }
 }
 
