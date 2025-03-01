@@ -5,18 +5,41 @@ struct Diary: View {
 
     var body: some View {
         VStack {
-            Text("Diary")
-                .font(.title)
+            HStack {
+                Spacer()
+                Button(action: { previousDay() }) {
+                    Image(systemName: "arrow.backward")
+                        .font(.title)
+                        .foregroundStyle(Color.primary.opacity(0.5))
+                }
                 .padding()
-            
-            Button("Open Camera") {
-                showCamera = true
+                Spacer()
+                Text("Today")
+                    .font(.title)
+                    .fontWeight(.bold)
+                Spacer()
+                Button(action: { previousDay() }) {
+                    Image(systemName: "arrow.forward")
+                        .font(.title)
+                        .foregroundStyle(Color.primary.opacity(0.5))
+                }
+                .padding()
+                Spacer()
             }
+            MealView()
         }
-        .navigationTitle("Diary")
         .sheet(isPresented: $showCamera) {
             CameraView()
         }
+        
+    }
+    
+    func previousDay() {
+        print("Previous day tapped")
+    }
+    
+    func nextDay() {
+        print("Next day tapped")
     }
 }
 

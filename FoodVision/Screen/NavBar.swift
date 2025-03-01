@@ -73,7 +73,6 @@ struct NavBar: View {
 
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = UIColor.systemGray6
         appearance.backgroundImage = UIImage()
         appearance.shadowImage = image
 
