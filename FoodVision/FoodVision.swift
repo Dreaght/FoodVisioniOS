@@ -17,7 +17,7 @@ struct FoodVision: App {
             if !isSignIn {
                 LoginScreen()
             } else {
-                NavBar()
+                WelcomeView()
             }
         }
     }

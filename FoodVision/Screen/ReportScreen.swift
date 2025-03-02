@@ -14,3 +14,7 @@ struct ReportScreen: View {
 #Preview {
     ReportScreen()
 }
+
+#Preview {
+    ReportScreen()
+}

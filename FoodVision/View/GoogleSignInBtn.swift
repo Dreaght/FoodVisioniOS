@@ -27,7 +27,7 @@ struct GoogleSignInBtn: View {
                            .padding(8)
                            .mask(Circle())
                        Spacer()
-                       Text("Sign-in with Google")
+                       Text("Sign in with Google")
                            .foregroundColor(.black)
                            .fontWeight(.medium)
                            .frame(maxWidth: .infinity, alignment: .center)
