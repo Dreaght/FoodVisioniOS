@@ -1,23 +1,16 @@
-//
-//  MealView.swift
-//  FoodVision
-//
-//  Created by Nikita Efimov on 3/1/25.
-//
-
 import SwiftUI
 
 struct MealView: View {
     @State private var meals: [String: [(name: String, calories: Int)]] = [
-        "Breakfast": [("Eggs", 155), ("Toast", 75), ("Orange Juice", 112), ("Avocado Toast", 120)],
+        "Breakfast": [("Eggs", 155), ("Toast", 75), ("Orange Juice", 112)],
         "Lunch": [("Salad", 200), ("Grilled Chicken", 335)],
-        "Dinner": [("Pasta", 400), ("Garlic Bread", 150), ("Wine", 125)]
+        "Dinner": []
     ]
 
     var body: some View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
-                ForEach(meals.keys.sorted(), id: \.self) { meal in
+                ForEach(["Breakfast", "Lunch", "Dinner"], id: \.self) { meal in
                     MealSectionView(mealName: meal, foods: meals[meal] ?? [])
                         .frame(height: proxy.size.height / 3) // 1/3 of available view height
                 }
@@ -28,8 +21,16 @@ struct MealView: View {
 
 struct MealSectionView: View {
     let mealName: String
-    let foods: [(name: String, calories: Int)]
-
+    @State public var foods: [(name: String, calories: Int)]
+    @State private var foodLog:(name: String, calories: Int) = ("", 0)
+    @State private var showingInput = false
+    
+    private func addFood() {
+        guard !foodLog.name.isEmpty else {return}
+        foods.append(foodLog)
+        foodLog = ("", 0)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Fixed header (Meal title + Add button)
@@ -40,25 +41,32 @@ struct MealSectionView: View {
                     .foregroundStyle(.opacity(0.7))
                     .padding(.leading, 20)
                 Spacer()
-                Button(action: {
-                    
-                }) {
+                Button (action: { showingInput.toggle() }) {
                     Image(systemName: "plus")
                 }
                 .foregroundStyle(.opacity(0.9))
                 .padding(8)
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
+                .alert("Enter Food Information", isPresented: $showingInput) {
+                    TextField("Enter food name", text: $foodLog.name)
+                    TextField("Calories", value: $foodLog.calories, format: .number)
+                        .keyboardType(.numberPad)
+                    Button("OK", action: addFood)
+                    Button("Cancel", role: .cancel) { showingInput.toggle() }
+                }
             }
             .padding(.horizontal)
-            .frame(height: 50) // Fixed height for header
-
+            .frame(height: 50)
+            .background(Color.customLightGray)// Fixed height for header
+            
+            Spacer()
             // Scrollable food list
             ScrollView {
                 VStack {
                     if foods.isEmpty {
                         Text("No food items added")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(Color.gray)
                             .padding()
                     } else {
                         ForEach(foods, id: \.name) { food in

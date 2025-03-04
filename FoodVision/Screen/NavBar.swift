@@ -1,9 +1,5 @@
 import SwiftUI
 
-extension Color {
-    static let customLightBlue = Color(red: 158/255, green: 240/255, blue: 229/255)
-}
-
 extension UIImage {
     static func gradientImageWithBounds(bounds: CGRect, colors: [CGColor]) -> UIImage {
         let gradientLayer = CAGradientLayer()
