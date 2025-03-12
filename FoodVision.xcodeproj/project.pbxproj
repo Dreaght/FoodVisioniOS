@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B10FD4892D81EBCB0075DEAB /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B10FD4882D81EBCB0075DEAB /* SDWebImageSwiftUI */; };
 		B1D000972D6F0CE000E3B33C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000962D6F0CE000E3B33C /* GoogleSignIn */; };
 		B1D000992D6F0CE000E3B33C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000982D6F0CE000E3B33C /* GoogleSignInSwift */; };
 		B1D000BA2D6F37E600E3B33C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B1D000B92D6F37E600E3B33C /* FirebaseAuth */; };
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B10FD4892D81EBCB0075DEAB /* SDWebImageSwiftUI in Frameworks */,
 				B1D000972D6F0CE000E3B33C /* GoogleSignIn in Frameworks */,
 				B1D000BA2D6F37E600E3B33C /* FirebaseAuth in Frameworks */,
 				B1D000BC2D6F37E600E3B33C /* FirebaseCore in Frameworks */,
@@ -93,6 +95,7 @@
 				B1D000982D6F0CE000E3B33C /* GoogleSignInSwift */,
 				B1D000B92D6F37E600E3B33C /* FirebaseAuth */,
 				B1D000BB2D6F37E600E3B33C /* FirebaseCore */,
+				B10FD4882D81EBCB0075DEAB /* SDWebImageSwiftUI */,
 			);
 			productName = FoodVisor;
 			productReference = 9B1D16EA2D620B1B006691D7 /* FoodVision.app */;
@@ -125,6 +128,7 @@
 			packageReferences = (
 				B1D000952D6F0CE000E3B33C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				B1D000AA2D6F1AAA00E3B33C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B10FD4872D81EBCB0075DEAB /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9B1D16EB2D620B1B006691D7 /* Products */;
@@ -360,6 +364,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B10FD4872D81EBCB0075DEAB /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
 		B1D000952D6F0CE000E3B33C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -379,6 +391,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B10FD4882D81EBCB0075DEAB /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B10FD4872D81EBCB0075DEAB /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
 		B1D000962D6F0CE000E3B33C /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B1D000952D6F0CE000E3B33C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
