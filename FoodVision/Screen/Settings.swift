@@ -7,6 +7,8 @@ struct Settings: View {
     @State var currWeight = 50
     @State private var showPicker: Bool = false // Control visibility of the picker
     @State private var showLogoutOption: Bool = false
+    @State private var navigateToWelcome = false
+
     var body: some View {
         VStack {
             Spacer()
@@ -45,7 +47,12 @@ struct Settings: View {
         .actionSheet(isPresented: $showLogoutOption) {
             .init(title: Text("Settings"), message: Text("Are you sure you want to sign out?"), buttons: [
                 .destructive(Text("Sign out"), action: {
-                    print("Handle sign out")
+                    do {
+                        try Auth.auth().signOut()
+                        UserDefaults.standard.set(false, forKey: "signIn")
+                    } catch let signOutError as NSError {
+                        print("Error signing out: %@", signOutError.localizedDescription)
+                    }
                 }),
                 .cancel()
             ])

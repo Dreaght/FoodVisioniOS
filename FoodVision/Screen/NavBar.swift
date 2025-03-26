@@ -16,44 +16,48 @@ extension UIImage {
 
 struct NavBar: View {
     @Environment(\.colorScheme) var colorScheme
-
+    @AppStorage("signIn") var isSignIn = false
     init() {
         updateAppearance(for: UITraitCollection.current.userInterfaceStyle)
     }
 
     var body: some View {
-        TabView {
-            NavigationStack {
-                Diary()
-            }
-            .tabItem {
-                Label("Diary", systemImage: "house")
-            }
+        if !isSignIn {
+            LoginScreen()
+        } else {
+            TabView {
+                NavigationStack {
+                    Diary()
+                }
+                .tabItem {
+                    Label("Diary", systemImage: "house")
+                }
 
-            NavigationStack {
-                ReportScreen()
-            }
-            .tabItem {
-                Label("Reports", systemImage: "list.clipboard")
-            }
+                NavigationStack {
+                    ReportScreen()
+                }
+                .tabItem {
+                    Label("Reports", systemImage: "list.clipboard")
+                }
 
-            NavigationStack {
-                ChatBot()
-            }
-            .tabItem {
-                Label("Chat", systemImage: "bubble.left.and.text.bubble.right")
-            }
+                NavigationStack {
+                    ChatBot()
+                }
+                .tabItem {
+                    Label("Chat", systemImage: "bubble.left.and.text.bubble.right")
+                }
 
-            NavigationStack {
-                Settings()
+                NavigationStack {
+                    Settings()
+                }
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }
             }
-            .tabItem {
-                Label("Settings", systemImage: "gearshape")
+            .tint(Color.customLightBlue)
+            .onAppear {
+                updateAppearance(for: colorScheme == .dark ? .dark : .light)
             }
-        }
-        .tint(Color.customLightBlue)
-        .onAppear {
-            updateAppearance(for: colorScheme == .dark ? .dark : .light)
         }
     }
 
