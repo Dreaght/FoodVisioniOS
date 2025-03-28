@@ -1,16 +1,9 @@
-//
-//  BodyPropertiesPreview.swift
-//  FoodVision
-//
-//  Created by Nikita Efimov on 3/4/25.
-//
-
 import SwiftUI
 
 struct BodyPropertiesPreview: View {
     @Binding var selectedGender: String?
-    @State var height: CGFloat = 178
-    @State var weight: CGFloat = 70
+    @Binding var height: CGFloat
+    @Binding var weight: CGFloat
     
     var figure: Image {
         Image(systemName: selectedGender == "Male" ? "figure.stand" : "figure.stand.dress")
@@ -47,6 +40,8 @@ struct BodyPropertiesPreview: View {
 
 struct BodyPropertiesPreview_Previews: PreviewProvider {
     static var previews: some View {
-        BodyPropertiesPreview(selectedGender: .constant("Male"), height: 178, weight: 70)
+        @State var height: CGFloat = 170
+        @State var weight: CGFloat = 70
+        BodyPropertiesPreview(selectedGender: .constant("Male"), height: $height, weight: $weight)
     }
 }

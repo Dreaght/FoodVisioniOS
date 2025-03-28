@@ -4,10 +4,13 @@ import FirebaseAuth
 
 
 struct Settings: View {
-    @State var currWeight = 50
     @State private var showPicker: Bool = false // Control visibility of the picker
     @State private var showLogoutOption: Bool = false
     @State private var navigateToWelcome = false
+    @AppStorage("height") var height = 170
+    @AppStorage("currweight") var currweight = 70
+    @AppStorage("birthdate") var bday = Date()
+    @AppStorage("gender") var gender = "Male"
 
     var body: some View {
         VStack {
@@ -23,9 +26,38 @@ struct Settings: View {
             Text(Auth.auth().currentUser?.displayName ?? "Stranger")
             Form {
                 Section("About Me") {
-                    ScrollValuePicker(num: .constant(50), minNum: .constant(2), maxNum: .constant(650), numType: .constant("kg"), textf: .constant("Current Weight:"))
-                    ScrollValuePicker(num: .constant(150), minNum: .constant(100), maxNum: .constant(300), numType: .constant("cm"), textf: .constant("Current Height:"))
+                    ScrollValuePicker(num: $currweight, minNum: .constant(20), maxNum: .constant(650), numType: .constant("kg"), textf: .constant("Current Weight:"))
+                        .onChange(of: currweight, initial: false) {
+                            weightChanged(currweight)
+                        }
+                    ScrollValuePicker(num: $height, minNum: .constant(50), maxNum: .constant(300), numType: .constant("cm"), textf: .constant("Current Height:"))
+                        .onChange(of: height, initial: false) {
+                            heightChanged(height)
+                        }
+                    DatePicker(
+                        "Birthdate:",
+                        selection: $bday,
+                        displayedComponents: [.date]
+                    )
+                    .onChange(of: bday, initial: false) {
+                        birthdateChanged(bday)
+                    }
+                    .padding(.trailing, 55)
+                    .padding(.vertical, 10)
+                    HStack {
+                        Text("Gender:")
+                        Picker("Your Gender", selection: $gender) {
+                                    Text("Male").tag("Male")
+                                    Text("Female").tag("Female")
+                                }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .onChange(of: gender, initial: false) {
+                            genderChanged(gender)
+                        }
+                        .padding()
+                    }
                 }
+                
                 Section("Log Out") {
                     HStack {
                         Text(Auth.auth().currentUser?.email ?? "test@test.com")
@@ -57,6 +89,18 @@ struct Settings: View {
                 .cancel()
             ])
         }
+    }
+    private func weightChanged(_ newWeight: Int) {
+        UserDefaults.standard.set(newWeight, forKey: "currweight")
+    }
+    private func heightChanged(_ newHeight: Int) {
+        UserDefaults.standard.set(newHeight, forKey: "height")
+    }
+    private func birthdateChanged(_ newbday: Date) {
+        UserDefaults.standard.set(newbday, forKey: "birthdate")
+    }
+    private func genderChanged(_ newGender: String) {
+        UserDefaults.standard.set(newGender, forKey: "gender")
     }
 }
 

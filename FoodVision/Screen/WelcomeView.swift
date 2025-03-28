@@ -72,7 +72,7 @@ struct WelcomeView: View {
                                     HStack {
                                         Spacer()
                                         BodyPropertiesPreview(selectedGender: $selectedGender,
-                                                  height: height, weight: weight)
+                                                  height: $height, weight: $weight)
                                         Spacer()
                                         Spacer()
                                     }
@@ -90,7 +90,7 @@ struct WelcomeView: View {
                             } else {
                                 BodyPropertiesView(
                                     selectedGender: $selectedGender,
-                                    height: height, weight: weight
+                                    height: $height, weight: $weight
                                 )
                                 .opacity(mainUIOpacity)  // Ensure the view fades in
                                 .transition(.opacity)
@@ -158,6 +158,10 @@ struct WelcomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             // Trigger the transition to the main app
             showMainApp = true
+            UserDefaults.standard.set(height, forKey: "height")
+            UserDefaults.standard.set(weight, forKey: "currweight")
+            UserDefaults.standard.set(birthDate, forKey: "birthdate")
+            UserDefaults.standard.set(String(selectedGender ?? "Male"), forKey: "gender")
         }
     }
 }

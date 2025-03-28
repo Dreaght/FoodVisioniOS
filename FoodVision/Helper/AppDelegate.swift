@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  FoodVisor
-//
-//  Created by Tracy Chan on 2025-02-26.
-//
-//
 import SwiftUI
 import FirebaseCore
 import GoogleSignIn

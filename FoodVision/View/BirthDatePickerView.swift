@@ -1,11 +1,3 @@
-//
-//  BirthDatePickerView.swift
-//  FoodVision
-//
-//  Created by Nikita Efimov on 3/3/25.
-//
-
-
 import SwiftUI
 
 struct BirthDatePickerView: View {
