@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct MealView: View {
+    @Binding var showCamera: Bool
+    
     @State private var meals: [String: [(name: String, calories: Int)]] = [
         "Breakfast": [("Eggs", 155), ("Toast", 75), ("Orange Juice", 112)],
         "Lunch": [("Salad", 200), ("Grilled Chicken", 335)],
@@ -11,7 +13,7 @@ struct MealView: View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
                 ForEach(["Breakfast", "Lunch", "Dinner"], id: \.self) { meal in
-                    MealSectionView(mealName: meal, foods: meals[meal] ?? [])
+                    MealSectionView(mealName: meal, foods: meals[meal] ?? [], showCamera: $showCamera)
                         .frame(height: proxy.size.height / 3) // 1/3 of available view height
                 }
             }
@@ -23,7 +25,7 @@ struct MealSectionView: View {
     let mealName: String
     @State public var foods: [(name: String, calories: Int)]
     @State private var foodLog:(name: String, calories: Int) = ("", 0)
-    @State private var showingInput = false
+    @Binding var showCamera: Bool
     
     private func addFood() {
         guard !foodLog.name.isEmpty else {return}
@@ -41,20 +43,14 @@ struct MealSectionView: View {
                     .foregroundStyle(.opacity(0.7))
                     .padding(.leading, 20)
                 Spacer()
-                Button (action: { showingInput.toggle() }) {
+                Button (action: { showCamera = true }) {
                     Image(systemName: "plus")
                 }
                 .foregroundStyle(.opacity(0.9))
                 .padding(8)
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
-                .alert("Enter Food Information", isPresented: $showingInput) {
-                    TextField("Enter food name", text: $foodLog.name)
-                    TextField("Calories", value: $foodLog.calories, format: .number)
-                        .keyboardType(.numberPad)
-                    Button("OK", action: addFood)
-                    Button("Cancel", role: .cancel) { showingInput.toggle() }
-                }
+                
             }
             .padding(.horizontal)
             .frame(height: 50)
@@ -113,5 +109,5 @@ struct FoodItemView: View {
 }
 
 #Preview {
-    MealView()
+    MealView(showCamera: Binding.constant(false))
 }

@@ -26,7 +26,7 @@ struct Diary: View {
                 .padding()
                 Spacer()
             }
-            MealView()
+            MealView(showCamera: $showCamera)
         }
         .sheet(isPresented: $showCamera) {
             CameraView()
@@ -46,3 +46,7 @@ struct Diary: View {
 #Preview {
     Diary()
 }
+
+
+
+
