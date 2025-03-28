@@ -37,7 +37,7 @@ struct LoginHeader: View {
 }
 
 #Preview {
-    @State var text = "Welcome to FoodVision!"
-    @State var isVisible = false
+    @Previewable @State var text = "Welcome to FoodVision!"
+    @Previewable @State var isVisible = false
     return LoginHeader(text: $text, isVisible: $isVisible, onTextChanged: { _ in })
 }

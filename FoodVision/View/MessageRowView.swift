@@ -26,6 +26,9 @@ struct MessageRowView: View {
                 WebImage(url: image)
                 .resizable()
                 .frame(width: 50, height: 50)
+                .cornerRadius(75)
+                .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                .shadow(radius: 5)
             } else if (image2 != nil) {
                 let img: String = image2 ?? "person.crop.circle"
                 Image(img)

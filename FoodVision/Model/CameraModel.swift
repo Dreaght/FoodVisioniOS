@@ -14,6 +14,7 @@ class CameraModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
 
     private func setupCamera() {
         session.beginConfiguration()
+        session.commitConfiguration()
         
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
               let input = try? AVCaptureDeviceInput(device: device) else { return }
@@ -21,7 +22,7 @@ class CameraModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
         if session.canAddInput(input) { session.addInput(input) }
         if session.canAddOutput(photoOutput) { session.addOutput(photoOutput) }
 
-        session.commitConfiguration()
+        
     }
 
     func startSession() {

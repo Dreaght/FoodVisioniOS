@@ -34,8 +34,8 @@ struct ChatBot: View {
                 bottomView(img: Auth.auth().currentUser?.photoURL, proxy: proxy)
                 Spacer()
             }
-            .onChange(of: vm.messages.last?.responseText) {
-                _ in scrollToBottom(proxy: proxy)
+            .onChange(of: vm.messages.last?.responseText, initial: false) {
+                scrollToBottom(proxy: proxy)
             }
         }
         .background(colorScheme == .light ? .white : Color(red:52/255, green: 53/255, blue:65/255, opacity: 0.5))
