@@ -11,6 +11,7 @@ struct Settings: View {
     @AppStorage("currweight") var currweight = 70
     @AppStorage("birthdate") var bday = Date()
     @AppStorage("gender") var gender = "Male"
+    @AppStorage("targetweight") var targetweight = 60
 
     var body: some View {
         VStack {
@@ -29,6 +30,10 @@ struct Settings: View {
                     ScrollValuePicker(num: $currweight, minNum: .constant(20), maxNum: .constant(650), numType: .constant("kg"), textf: .constant("Current Weight:"))
                         .onChange(of: currweight, initial: false) {
                             weightChanged(currweight)
+                        }
+                    ScrollValuePicker(num: $targetweight, minNum: .constant(20), maxNum: .constant(650), numType: .constant("kg"), textf: .constant("Target Weight:"))
+                        .onChange(of: currweight, initial: false) {
+                            targetweightChanged(targetweight)
                         }
                     ScrollValuePicker(num: $height, minNum: .constant(50), maxNum: .constant(300), numType: .constant("cm"), textf: .constant("Current Height:"))
                         .onChange(of: height, initial: false) {
@@ -95,6 +100,9 @@ struct Settings: View {
     }
     private func heightChanged(_ newHeight: Int) {
         UserDefaults.standard.set(newHeight, forKey: "height")
+    }
+    private func targetweightChanged(_ newWeight: Int) {
+        UserDefaults.standard.set(newWeight, forKey: "targetweight")
     }
     private func birthdateChanged(_ newbday: Date) {
         UserDefaults.standard.set(newbday, forKey: "birthdate")
