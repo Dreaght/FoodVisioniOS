@@ -4,6 +4,8 @@ import AVFoundation
 struct CameraView: View {
     @Environment(\.dismiss) var dismiss  // Allows closing the sheet
     @StateObject private var cameraModel = CameraModel()  // Camera logic
+    
+    var onImageCaptured: (UIImage) -> Void
 
     var body: some View {
         ZStack {
@@ -34,7 +36,13 @@ struct CameraView: View {
             cameraModel.stopSession()
         }
         .onChange(of: cameraModel.capturedImage) { _ in
-            dismiss()  // Close camera when image is captured
+            if let img = cameraModel.capturedImage {
+                // Analyze or process the image if needed
+                // For now, just pass it back using the closure
+                onImageCaptured(img)
+                
+                dismiss()  // Close camera when image is captured
+            }
         }
     }
 }

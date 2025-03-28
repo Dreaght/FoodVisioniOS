@@ -2,6 +2,8 @@ import SwiftUI
 
 struct Diary: View {
     @State private var showCamera = false  // Track if camera is open
+    @State private var capturedImage: UIImage?
+    @State private var foodFragments: [(image: UIImage, name: String, calories: Int)] = []
 
     var body: some View {
         VStack {
@@ -18,7 +20,7 @@ struct Diary: View {
                     .font(.title)
                     .fontWeight(.bold)
                 Spacer()
-                Button(action: { previousDay() }) {
+                Button(action: { nextDay() }) {
                     Image(systemName: "arrow.forward")
                         .font(.title)
                         .foregroundStyle(Color.primary.opacity(0.5))
@@ -26,12 +28,26 @@ struct Diary: View {
                 .padding()
                 Spacer()
             }
-            MealView(showCamera: $showCamera)
+            MealView(showCamera: $showCamera, foodItems: $foodFragments)  // Pass foodFragments to MealView
+
         }
         .sheet(isPresented: $showCamera) {
-            CameraView()
+            CameraView(onImageCaptured: { image in
+                capturedImage = image
+                print("Captured Image: \(image)")
+                
+                let processor = DummyFoodProcessor(frame: capturedImage!)  // capturedImage is the UIImage you captured
+                processor.detectFoods { foodRegions in
+                    // Map food regions to the cropped image fragments
+                    let fragments = foodRegions.map { region in
+                        (image: region.imageFragment, name: region.nutritionInfo.name, calories: region.nutritionInfo.calories)
+                    }
+                    foodFragments = fragments  // Update the foodFragments array
+                    print(foodFragments)
+
+                }
+            })
         }
-        
     }
     
     func previousDay() {
@@ -46,7 +62,3 @@ struct Diary: View {
 #Preview {
     Diary()
 }
-
-
-
-

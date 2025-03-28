@@ -2,19 +2,14 @@ import SwiftUI
 
 struct MealView: View {
     @Binding var showCamera: Bool
+    @Binding var foodItems: [(image: UIImage, name: String, calories: Int)]  // Pass food items
     
-    @State private var meals: [String: [(name: String, calories: Int)]] = [
-        "Breakfast": [("Eggs", 155), ("Toast", 75), ("Orange Juice", 112)],
-        "Lunch": [("Salad", 200), ("Grilled Chicken", 335)],
-        "Dinner": []
-    ]
-
     var body: some View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
                 ForEach(["Breakfast", "Lunch", "Dinner"], id: \.self) { meal in
-                    MealSectionView(mealName: meal, foods: meals[meal] ?? [], showCamera: $showCamera)
-                        .frame(height: proxy.size.height / 3) // 1/3 of available view height
+                    MealSectionView(mealName: meal, foods: $foodItems, showCamera: $showCamera)
+                        .frame(height: proxy.size.height / 3)  // Adjust height for each section
                 }
             }
         }
@@ -23,14 +18,11 @@ struct MealView: View {
 
 struct MealSectionView: View {
     let mealName: String
-    @State public var foods: [(name: String, calories: Int)]
-    @State private var foodLog:(name: String, calories: Int) = ("", 0)
+    @Binding public var foods: [(image: UIImage, name: String, calories: Int)]  // Pass food items
     @Binding var showCamera: Bool
     
     private func addFood() {
-        guard !foodLog.name.isEmpty else {return}
-        foods.append(foodLog)
-        foodLog = ("", 0)
+        // Add food logic if needed
     }
     
     var body: some View {
@@ -43,7 +35,10 @@ struct MealSectionView: View {
                     .foregroundStyle(.opacity(0.7))
                     .padding(.leading, 20)
                 Spacer()
-                Button (action: { showCamera = true }) {
+                Button(action: {
+                    showCamera = true
+                    print("FOODS: ", foods)
+                }) {
                     Image(systemName: "plus")
                 }
                 .foregroundStyle(.opacity(0.9))
@@ -54,7 +49,7 @@ struct MealSectionView: View {
             }
             .padding(.horizontal)
             .frame(height: 50)
-            .background(Color.customLightGray)// Fixed height for header
+            .background(Color.customLightGray)  // Fixed height for header
             
             Spacer()
             // Scrollable food list
@@ -66,7 +61,7 @@ struct MealSectionView: View {
                             .padding()
                     } else {
                         ForEach(foods, id: \.name) { food in
-                            FoodItemView(foodName: food.name, calories: food.calories)
+                            FoodItemView(foodImage: food.image, foodName: food.name, calories: food.calories)
                         }
                     }
                 }
@@ -77,18 +72,18 @@ struct MealSectionView: View {
 }
 
 struct FoodItemView: View {
-    let foodName: String
-    let calories: Int
+    let foodImage: UIImage  // Food image fragment
+    let foodName: String    // Food name
+    let calories: Int      // Food calories
 
     var body: some View {
         HStack {
-            Image(systemName: "fork.knife") // Default food icon
+            Image(uiImage: foodImage)  // Use the provided food image
                 .resizable()
                 .scaledToFit()
-                .frame(width: 30, height: 30)
-                .foregroundStyle(.gray)
+                .frame(width: 30, height: 30)  // Adjust size as needed
                 .padding(.leading, 10)
-
+            
             VStack(alignment: .leading) {
                 Text(foodName)
                     .font(.headline)
@@ -109,5 +104,5 @@ struct FoodItemView: View {
 }
 
 #Preview {
-    MealView(showCamera: Binding.constant(false))
+    MealView(showCamera: Binding.constant(false), foodItems: Binding.constant([]))
 }
