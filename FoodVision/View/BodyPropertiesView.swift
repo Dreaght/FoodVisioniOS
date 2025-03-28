@@ -2,8 +2,8 @@ import SwiftUI
 
 struct BodyPropertiesView: View {
     @Binding var selectedGender: String?
-    @State var height: CGFloat = 178
-    @State var weight: CGFloat = 70
+    @Binding var height: CGFloat
+    @Binding var weight: CGFloat
     
     var figure: Image {
         Image(systemName: selectedGender == "Male" ? "figure.stand" : "figure.stand.dress")
@@ -49,6 +49,8 @@ struct BodyPropertiesView: View {
 
 struct BodyPropertiesView_Previews: PreviewProvider {
     static var previews: some View {
-        BodyPropertiesView(selectedGender: .constant("Male"), height: 178, weight: 70)
+        @State var height: CGFloat = 170
+        @State var weight: CGFloat = 70
+        BodyPropertiesView(selectedGender: .constant("Male"), height: $height, weight: $weight)
     }
 }
