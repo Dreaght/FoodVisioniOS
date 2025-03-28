@@ -47,10 +47,16 @@ struct ChatBot: View {
                 WebImage(url: url)
                     .resizable()
                     .frame(width: 25, height: 25)
+                    .cornerRadius(75)
+                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .shadow(radius: 5)
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
                     .frame(width: 25, height: 25)
+                    .cornerRadius(75)
+                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .shadow(radius: 5)
             }
             
             TextField("Send Message", text: $vm.inputMessage, axis: .vertical)

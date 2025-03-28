@@ -9,7 +9,7 @@ struct MessageRowView: View {
     let retryCallBack: (MessageRow) -> Void
     var body: some View {
         VStack(spacing: 0) {
-            messageRow(text: message.sendText, image: message.sendImage, bgColor: .customLightBlue)
+            messageRow(text: message.sendText, image: message.sendImage, bgColor: colorScheme == .light ? .white : Color(red: 52/255, green: 53/255, blue: 65/255, opacity: 0.5))
             
             let temp: String? = message.responseText
             if let text = temp {
@@ -25,16 +25,22 @@ struct MessageRowView: View {
             if (image != nil) {
                 WebImage(url: image)
                 .resizable()
-                .frame(width: 25, height: 25)
+                .frame(width: 50, height: 50)
             } else if (image2 != nil) {
                 let img: String = image2 ?? "person.crop.circle"
                 Image(img)
                     .resizable()
-                    .frame(width: 25, height: 25)
+                    .frame(width: 50, height: 50)
+                    .cornerRadius(75)
+                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .shadow(radius: 5)
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
-                    .frame(width: 25, height: 25)
+                    .frame(width: 50, height: 50)
+                    .cornerRadius(75)
+                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .shadow(radius: 5)
             }
             VStack(alignment: .leading) {
                 if (!text.isEmpty) {
@@ -63,7 +69,7 @@ struct MessageRowView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .backgroundStyle(bgColor)
+        .background(bgColor)
     }
     
 }
