@@ -44,7 +44,6 @@ struct Diary: View {
                     }
                     foodFragments = fragments  // Update the foodFragments array
                     print(foodFragments)
-
                 }
             })
         }
