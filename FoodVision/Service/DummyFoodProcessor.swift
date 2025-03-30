@@ -5,52 +5,60 @@ import UIKit
 class DummyFoodProcessor {
     
     private let image: UIImage
-    
+    private var foodRegions: [(Int, Int, Int, Int)] = []
     init(frame: UIImage) {
         self.image = frame
     }
     
     // Asynchronously detects food regions from the image
-    func detectFoods(completion: @escaping ([FoodRegion]) -> Void) {
+    func detectFoods() -> [(Int, Int, Int, Int)] {
         // Get the frame dimensions
-        let frameWidth = Int(image.size.width)
-        let frameHeight = Int(image.size.height)
+        let frameWidth = UIScreen.main.bounds.width
+        let frameHeight = 400
         
         // Generate 3 random regions
-        let regions = (0..<3).map { _ in
-            createRandomRegion(frameWidth: frameWidth, frameHeight: frameHeight)
+        foodRegions = (0..<3).map { _ in
+            createRandomRegion(frameWidth: Int(frameWidth), frameHeight: frameHeight)
         }
         
+        return foodRegions
+    }
+    
+    func cropSelectedFood(seletedIndices: [Int]) -> [FoodRegion] {
         // Extract fragments based on the regions
-        var foodRegions: [FoodRegion] = []
+        var result: [FoodRegion] = []
         
-        for rect in regions {
+        for index in seletedIndices {
+            let region = foodRegions[index]
+            let rect = CGRect(x: CGFloat((region.0 + region.2) / 2), y: CGFloat((region.1 + region.3) / 2),
+                                          width: CGFloat((region.2 - region.0)), height: CGFloat((region.3 - region.1)))
             if let fragment = cropImage(image: image, rect: rect) {
                 let foodRegion = FoodRegion(rect: rect, imageFragment: fragment, nutritionInfo: NutritionInfo(name: "Sample Food", calories: 100))
-                foodRegions.append(foodRegion)
+                result.append(foodRegion)
             }
         }
-        
-        // Simulate a delay for asynchronous processing
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            DispatchQueue.main.async {
-                completion(foodRegions)
-            }
-        }
+        return result
     }
     
     // Create random region within the image frame
-    private func createRandomRegion(frameWidth: Int, frameHeight: Int) -> CGRect {
+    private func createRandomRegion(frameWidth: Int, frameHeight: Int) -> (Int, Int, Int, Int) {
         let maxWidth = Int(Double(frameWidth) * 0.3)
         let maxHeight = Int(Double(frameHeight) * 0.3)
         
-        let left = Int.random(in: 0..<frameWidth - maxWidth)
-        let top = Int.random(in: 0..<frameHeight - maxHeight)
+        // Ensure maxWidth and maxHeight are at least 50 to prevent issues
+        let constrainedMaxWidth = max(50, maxWidth)
+        let constrainedMaxHeight = max(50, maxHeight)
         
-        let width = max(50, Int.random(in: 50..<maxWidth))
-        let height = max(50, Int.random(in: 50..<maxHeight))
+        let x1 = Int.random(in: 0..<(frameWidth - constrainedMaxWidth))
+        let y1 = Int.random(in: 0..<(frameHeight - constrainedMaxHeight))
         
-        return CGRect(x: left, y: top, width: width, height: height)
+        let width = max(50, Int.random(in: 50...constrainedMaxWidth))
+        let height = max(50, Int.random(in: 50...constrainedMaxHeight))
+        
+        let x2 = x1 + width // Bottom-right x-coordinate
+        let y2 = y1 + height // Bottom-right y-coordinate
+        
+        return (x1, y1, x2, y2) // Return the tuple with x1, y1, x2, y2
     }
     
     // Crop the image based on the provided CGRect

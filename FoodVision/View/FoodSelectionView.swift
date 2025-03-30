@@ -18,7 +18,7 @@ struct FoodSelectionView: View {
                     rectangleButton(for: index)
                 }
             }
-            .frame(width: 400, height: 400)
+            .frame(width: UIScreen.main.bounds.width, height: 400)
             
             Button(action: {
                 print("submit button tapped")
@@ -58,7 +58,6 @@ struct FoodSelectionView: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 400, height: 400)
         }
     }
     

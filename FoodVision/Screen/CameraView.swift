@@ -58,7 +58,7 @@ struct CameraView: View {
                 // Analyze or process the image if needed
                 // For now, just pass it back using the closure
                 onImageCaptured(img)
-                dismiss()  // Close camera when image is captured
+//                dismiss()  // Close camera when image is captured
             }
         }
         .onChange(of: selectedItem, initial: false) {
@@ -69,7 +69,7 @@ struct CameraView: View {
                     let image = UIImage(data: data) {
                     self.selectedImage = image
                     onImageCaptured(selectedImage ?? UIImage())
-                    dismiss()
+//                    dismiss()
                 }
             }
         }

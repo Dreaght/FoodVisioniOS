@@ -2,6 +2,7 @@ import SwiftUI
 
 struct Diary: View {
     @State private var showCamera = false  // Track if camera is open
+    @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var foodFragments: [(image: UIImage, name: String, calories: Int)] = []
 
@@ -32,20 +33,21 @@ struct Diary: View {
 
         }
         .sheet(isPresented: $showCamera) {
-            CameraView(onImageCaptured: { image in
-                capturedImage = image
-                print("Captured Image: \(image)")
-                
-                let processor = DummyFoodProcessor(frame: capturedImage!)  // capturedImage is the UIImage you captured
-                processor.detectFoods { foodRegions in
-                    // Map food regions to the cropped image fragments
-                    let fragments = foodRegions.map { region in
-                        (image: region.imageFragment, name: region.nutritionInfo.name, calories: region.nutritionInfo.calories)
-                    }
-                    foodFragments = fragments  // Update the foodFragments array
-                    print(foodFragments)
+            if !showFoodSelection {
+                CameraView(onImageCaptured: { image in
+                    capturedImage = image
+                    print("Captured Image: \(image)")
+                    showFoodSelection = true
+                })
+            } else {
+                if let cimage = capturedImage {
+                    let processor = DummyFoodProcessor(frame: cimage)  // capturedImage is the UIImage you captured
+                    let regions = processor.detectFoods()
+                    FoodSelectionView(rectangles: regions, image: cimage)
+                } else {
+                    Text("No Image Captured")
                 }
-            })
+            }
         }
     }
     
