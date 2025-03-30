@@ -2,15 +2,27 @@ import SwiftUI
 
 struct MealView: View {
     @Binding var showCamera: Bool
-    @Binding var foodItems: [FoodRegion]  // Pass food items
-    
+    @Binding var foodItems: DiaryDailyDataPoint  // Pass food items
+    var selectedMeal: (String) -> Void
     var body: some View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
-                ForEach(["Breakfast", "Lunch", "Dinner"], id: \.self) { meal in
-                    MealSectionView(mealName: meal, foods: $foodItems, showCamera: $showCamera)
-                        .frame(height: proxy.size.height / 3)  // Adjust height for each section
+                MealSectionView(mealName: "Breakfast", foods: $foodItems.breakfast, showCamera: $showCamera) {
+                    sm in
+                    selectedMeal(sm)
                 }
+                    .frame(height: proxy.size.height / 3)
+                MealSectionView(mealName: "Lunch", foods: $foodItems.lunch, showCamera: $showCamera) {
+                    sm in
+                    selectedMeal(sm)
+                }
+                    .frame(height: proxy.size.height / 3)
+                MealSectionView(mealName: "Dinner", foods: $foodItems.dinner, showCamera: $showCamera) {
+                    sm in
+                    selectedMeal(sm)
+                }
+                    .frame(height: proxy.size.height / 3)
+                
             }
         }
     }
@@ -18,13 +30,10 @@ struct MealView: View {
 
 struct MealSectionView: View {
     let mealName: String
-    @Binding public var foods: [FoodRegion]  // Pass food items
+    @Binding public var foods: [MealDataPoint] // Pass food items
     @Binding var showCamera: Bool
-    
-    private func addFood() {
-        // Add food logic if needed
-    }
-    
+    var onMealSelected: (String) -> Void
+
     var body: some View {
         VStack(spacing: 0) {
             // Fixed header (Meal title + Add button)
@@ -37,7 +46,8 @@ struct MealSectionView: View {
                 Spacer()
                 Button(action: {
                     showCamera = true
-                    print("FOODS: ", foods)
+                    print("\(mealName): ", foods)
+                    onMealSelected(mealName)
                 }) {
                     Image(systemName: "plus")
                 }
@@ -61,7 +71,7 @@ struct MealSectionView: View {
                             .padding()
                     } else {
                         ForEach(foods, id: \.id) { food in
-                            FoodItemView(foodImage: food.imageFragment, foodName: food.nutritionInfo.name, calories: food.nutritionInfo.calories)
+                            FoodItemView(foodImage: food.image, foodName: food.foodName, calories: food.calories)
                         }
                     }
                 }
@@ -104,5 +114,11 @@ struct FoodItemView: View {
 }
 
 #Preview {
-    MealView(showCamera: Binding.constant(false), foodItems: Binding.constant([]))
+    @Previewable @State var dia = DiaryDailyDataPoint(date: "2025-03-30")
+
+    
+    MealView(showCamera: Binding.constant(false), foodItems: $dia) {
+        sm in
+        print(sm)
+    }
 }

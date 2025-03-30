@@ -2,7 +2,8 @@ import Foundation
 import UIKit
 
 struct MealDataPoint {
-    let image: UIImage // image of the food
+    let id = UUID()
+    var image: UIImage // image of the food
     let foodName: String // name of the food
     
     // basic nutritional information about the food
@@ -12,7 +13,7 @@ struct MealDataPoint {
     let totalFat: Double        // in grams g
     let protein: Double         // in grams g
     let sugar: Double           // in grams g
-    let cholesteral: Double     // in milligrams mg
+    let cholesterol: Double     // in milligrams mg
     let sodium: Int             // in milligrams mg
     
     // minerals

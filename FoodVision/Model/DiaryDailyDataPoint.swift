@@ -5,7 +5,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.date = date
     }
     
-    var id = UUID().uuidString
+    var id = UUID()
     var date: String = ""
     var breakfast: [MealDataPoint] = []
     var lunch: [MealDataPoint] = []
@@ -18,7 +18,7 @@ class DiaryDailyDataPoint: Identifiable {
     var totalFat: Double = 0        // in grams g
     var protein: Double = 0         // in grams g
     var sugar: Double = 0           // in grams g
-    var cholesteral: Double = 0     // in milligrams mg
+    var cholesterol: Double = 0     // in milligrams mg
     var sodium: Int = 0             // in milligrams mg
     
     // minerals
@@ -58,6 +58,30 @@ class DiaryDailyDataPoint: Identifiable {
         }
     }
     
+    private func addToBreakfast(meal: MealDataPoint) {
+        self.breakfast.append(meal)
+    }
+    
+    private func addToLunch(meal: MealDataPoint) {
+        self.lunch.append(meal)
+    }
+    
+    private func addToDinner(meal: MealDataPoint) {
+        self.dinner.append(meal)
+    }
+    
+    private func deleteFromBreakfast(withID id: UUID) {
+        breakfast.removeAll { $0.id == id }
+    }
+    
+    private func deleteFromLunch(withID id: UUID) {
+        lunch.removeAll { $0.id == id }
+    }
+    
+    private func deleteFromDinner(withID id: UUID) {
+        dinner.removeAll { $0.id == id }
+    }
+    
     private func addToDaily(meal: MealDataPoint) {
         self.calories += meal.calories
         self.transFat += meal.transFat
@@ -65,7 +89,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.totalFat += meal.totalFat
         self.protein += meal.protein
         self.sugar += meal.sugar
-        self.cholesteral += meal.cholesteral
+        self.cholesterol += meal.cholesterol
         self.sodium += meal.sodium
         
         self.calcium += meal.calcium
@@ -97,7 +121,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.totalFat -= meal.totalFat
         self.protein -= meal.protein
         self.sugar -= meal.sugar
-        self.cholesteral -= meal.cholesteral
+        self.cholesterol -= meal.cholesterol
         self.sodium -= meal.sodium
         
         self.calcium -= meal.calcium
@@ -129,7 +153,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.totalFat = 0
         self.protein = 0
         self.sugar = 0
-        self.cholesteral = 0
+        self.cholesterol = 0
         self.sodium = 0
         
         self.calcium = 0

@@ -4,9 +4,10 @@ struct Diary: View {
     @State private var showCamera = false  // Track if camera is open
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
-    @State private var foodFragments: [FoodRegion] = []
     @State private var selectedRegionIndex: Set<Int> = []
     @State private var processor: DummyFoodProcessor?
+    @State var diaryPage: DiaryDailyDataPoint = DiaryDailyDataPoint(date: "dummy date")
+    @State private var selectedMeal = ""
     
     var body: some View {
         VStack {
@@ -31,12 +32,22 @@ struct Diary: View {
                 .padding()
                 Spacer()
             }
-            MealView(showCamera: $showCamera, foodItems: $foodFragments)  // Pass foodFragments to MealView
+            MealView(showCamera: $showCamera, foodItems: $diaryPage)  {
+                sm in
+                selectedMeal = sm
+            }
 
         }
         .sheet(isPresented: $showCamera, onDismiss: {
             if processor != nil {
-                foodFragments += processor?.cropSelectedFood(seletedIndices: Array(selectedRegionIndex)) ?? []
+                let foods = processor!.cropSelectedFood(seletedIndices: Array(selectedRegionIndex))
+                if (selectedMeal == "Breakfast") {
+                    diaryPage.breakfast.append(contentsOf: foods)
+                } else if (selectedMeal == "Lunch") {
+                    diaryPage.lunch.append(contentsOf: foods)
+                } else if (selectedMeal == "Dinner") {
+                    diaryPage.dinner.append(contentsOf: foods)
+                }
             }
             showFoodSelection = false
             showCamera = false
