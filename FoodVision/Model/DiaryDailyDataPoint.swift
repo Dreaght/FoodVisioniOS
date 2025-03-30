@@ -1,8 +1,22 @@
 import Foundation
 
 class DiaryDailyDataPoint: Identifiable {
-    init(date: String) {
+    static private var existingDates: [String: DiaryDailyDataPoint] = [:] // Dictionary to track existing instances
+    
+    private init(date: String) {
         self.date = date
+    }
+    
+    static func create(date: String) -> DiaryDailyDataPoint {
+        if let existingInstance = existingDates[date] {
+            // Return the existing instance
+            return existingInstance
+        }
+    
+        // Create a new instance and store it
+        let newInstance = DiaryDailyDataPoint(date: date)
+        existingDates[date] = newInstance
+        return newInstance
     }
     
     var id = UUID()

@@ -17,6 +17,8 @@ extension UIImage {
 struct NavBar: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("signIn") var isSignIn = false
+    @State private var diaryData: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: dateToString(date: Date()))
+
     init() {
         updateAppearance(for: UITraitCollection.current.userInterfaceStyle)
     }
@@ -26,8 +28,7 @@ struct NavBar: View {
             LoginScreen()
         } else {
             TabView {
-                NavigationStack {
-                    Diary()
+                NavigationStack {                        Diary(diaryPage: $diaryData) // Pass a binding
                 }
                 .tabItem {
                     Label("Diary", systemImage: "house")
@@ -77,6 +78,12 @@ struct NavBar: View {
         appearance.shadowImage = image
 
         UITabBar.appearance().standardAppearance = appearance
+    }
+    
+    static func dateToString(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd" // Set the desired format
+        return dateFormatter.string(from: date)
     }
 }
 

@@ -114,9 +114,8 @@ struct FoodItemView: View {
 }
 
 #Preview {
-    @Previewable @State var dia = DiaryDailyDataPoint(date: "2025-03-30")
+    @Previewable @State var dia = DiaryDailyDataPoint.create(date: "2025-03-30")
 
-    
     MealView(showCamera: Binding.constant(false), foodItems: $dia) {
         sm in
         print(sm)

@@ -6,25 +6,72 @@ struct Diary: View {
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
     @State private var processor: DummyFoodProcessor?
-    @State var diaryPage: DiaryDailyDataPoint = DiaryDailyDataPoint(date: "dummy date")
+    @Binding var diaryPage: DiaryDailyDataPoint
     @State private var selectedMeal = ""
+    @State private var showDatePicker = false
+    @State private var selectedDate = Date()
+    
+    // Define the date range
+    private var startDate: Date {
+        // February 1, 2025
+        let calendar = Calendar.current
+        return calendar.date(from: DateComponents(year: 2025, month: 2, day: 1))!
+    }
+        
+    private var endDate: Date {
+        // Today's date
+        return Date()
+    }
     
     var body: some View {
         VStack {
             HStack {
                 Spacer()
-                Button(action: { previousDay() }) {
+                Button(action: {
+                    let yesterday = previousDay()
+                    diaryPage = DiaryDailyDataPoint.create(date: yesterday)
+                }) {
                     Image(systemName: "arrow.backward")
                         .font(.title)
                         .foregroundStyle(Color.primary.opacity(0.5))
                 }
                 .padding()
                 Spacer()
-                Text("Today")
+                Text(diaryPage.date)
                     .font(.title)
                     .fontWeight(.bold)
+                    .onTapGesture {
+                        showDatePicker = true
+                    }
+                    .sheet(isPresented: $showDatePicker, onDismiss: {
+                        showDatePicker = false
+                    }) {
+                        VStack {
+                            Text("Select a date")
+                                .font(.title.bold())
+                                .padding()
+                            DatePicker("Select a date", selection: $selectedDate, in: startDate...endDate, displayedComponents: .date)
+                                .datePickerStyle(GraphicalDatePickerStyle())
+                                .padding()
+
+                            Button("Done") {
+                                showDatePicker = false // Dismiss the sheet
+                                diaryPage = DiaryDailyDataPoint.create(date: dateToString(date: selectedDate))
+                            }
+                            .padding()
+                            .background(.customLightBlue)
+                            .foregroundColor(.blackInLight)
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                    }
                 Spacer()
-                Button(action: { nextDay() }) {
+                Button(action: {
+                    if (diaryPage.date != dateToString(date: Date())) {
+                        let tmr = nextDay()
+                        diaryPage = DiaryDailyDataPoint.create(date: tmr)
+                    }
+                }) {
                     Image(systemName: "arrow.forward")
                         .font(.title)
                         .foregroundStyle(Color.primary.opacity(0.5))
@@ -32,6 +79,7 @@ struct Diary: View {
                 .padding()
                 Spacer()
             }
+            
             MealView(showCamera: $showCamera, foodItems: $diaryPage)  {
                 sm in
                 selectedMeal = sm
@@ -73,15 +121,41 @@ struct Diary: View {
         }
     }
     
-    func previousDay() {
+    func previousDay() -> String {
         print("Previous day tapped")
+        guard let date = stringToDate(date: diaryPage.date) else {
+            print("invalid date")
+            return "invalid date"
+        }
+        let calendar = Calendar.current
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: date) {
+            // Format yesterday's date back to a string
+            let prev = dateToString(date: yesterday)
+            return prev
+        }
+        return "failed to convert date to string"
     }
     
-    func nextDay() {
+    func nextDay() -> String {
         print("Next day tapped")
+        guard let date = stringToDate(date: diaryPage.date) else {
+            print("invalid date")
+            return "invalid date"
+        }
+        let calendar = Calendar.current
+        if let tmr = calendar.date(byAdding: .day, value: 1, to: date) {
+            // Format yesterday's date back to a string
+            let tomorrow = dateToString(date: tmr)
+            return tomorrow
+        }
+        return "failed"
     }
+
+
 }
 
 #Preview {
-    Diary()
+    @Previewable @State var diaryEntry = DiaryDailyDataPoint.create(date: "2025-03-30")
+    
+    Diary(diaryPage: $diaryEntry)
 }
