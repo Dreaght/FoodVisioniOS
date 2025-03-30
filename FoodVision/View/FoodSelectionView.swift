@@ -95,7 +95,8 @@ struct FoodSelectionView: View {
                 )
                 .frame(width: CGFloat(rect.2 - rect.0), height: CGFloat(rect.3 - rect.1))
         }
-        .position(x: CGFloat((rect.0 + rect.2) / 2), y: CGFloat((rect.1 + rect.3) / 2) )
+        .position(x: CGFloat((rect.0 + rect.2) / 2),
+                  y: CGFloat((rect.1 + rect.3) / 2) )
     }
     
     private func toggleSelection(for index: Int) {
@@ -108,6 +109,7 @@ struct FoodSelectionView: View {
 }
 
 #Preview {
+    @Previewable @State var sr: Set<Int> = []
     let buttonPositions: [(Int, Int, Int, Int)] = [
         (50, 50, 100, 100),
         (150, 150, 200, 200),
@@ -115,7 +117,6 @@ struct FoodSelectionView: View {
         (300, 300, 330, 380),
         (200, 300, 270, 330)
     ]
-    @State var sr: Set<Int> = []
     if let img = UIImage(named: "botpfp") {
         FoodSelectionView(selectedRectangles: $sr, rectangles: buttonPositions, image: img)
     } else {

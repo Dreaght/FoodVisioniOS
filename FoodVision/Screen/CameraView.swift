@@ -14,7 +14,7 @@ struct CameraView: View {
         ZStack {
             CameraPreview(session: cameraModel.session)
                 .ignoresSafeArea()
-
+                
             VStack {
                 Spacer()
                 HStack {
