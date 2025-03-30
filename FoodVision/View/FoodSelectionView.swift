@@ -57,7 +57,7 @@ struct FoodSelectionView: View {
             )
         }
     }
-    
+
     private var backButton: some View {
         Button(action: {
             // Action for chevron button
@@ -71,7 +71,7 @@ struct FoodSelectionView: View {
         }
         .padding(.leading, 20)
     }
-    
+
     private func backgroundImage(img: UIImage) -> some View {
         Group {
             Image(uiImage: image)
