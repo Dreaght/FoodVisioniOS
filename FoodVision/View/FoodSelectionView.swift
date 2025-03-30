@@ -7,10 +7,6 @@ struct FoodSelectionView: View {
 
     var body: some View {
         VStack {
-            HStack{
-                backButton
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
             ZStack {
                 backgroundImage(img: image)
@@ -40,19 +36,6 @@ struct FoodSelectionView: View {
         }
     }
     
-    private var backButton: some View {
-        Button(action: {
-            // Action for chevron button
-            print("Back button tapped")
-        }) {
-            Label("Back", systemImage: "chevron.backward")
-                .padding()
-                .foregroundColor(.blackInLight)
-                .cornerRadius(8)
-        }
-        .padding(.leading, 20)
-    }
-    
     private func backgroundImage(img: UIImage) -> some View {
         Group {
             Image(uiImage: image)
@@ -75,7 +58,8 @@ struct FoodSelectionView: View {
                 )
                 .frame(width: CGFloat(rect.2 - rect.0), height: CGFloat(rect.3 - rect.1))
         }
-        .position(x: CGFloat((rect.0 + rect.2) / 2), y: CGFloat((rect.1 + rect.3) / 2) )
+        .position(x: CGFloat((rect.0 + rect.2) / 2),
+                  y: CGFloat((rect.1 + rect.3) / 2) )
     }
     
     private func toggleSelection(for index: Int) {
