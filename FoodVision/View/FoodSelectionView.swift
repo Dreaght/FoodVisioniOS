@@ -1,17 +1,17 @@
 import SwiftUI
 
 struct FoodSelectionView: View {
-    @State private var selectedRectangles: Set<Int> = []
+    @Environment(\.dismiss) var dismiss  // Allows closing the sheet
+    @Binding var selectedRectangles: Set<Int>
+    @State private var showAlert = false
     let rectangles: [(Int, Int, Int, Int)]
     let image: UIImage
 
     var body: some View {
         VStack {
-            HStack{
-                backButton
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
+            Text("Please select the food you want to log:")
+                .padding()
             ZStack {
                 backgroundImage(img: image)
                 ForEach(0..<rectangles.count, id: \.self) { index in
@@ -19,24 +19,42 @@ struct FoodSelectionView: View {
                 }
             }
             .frame(width: UIScreen.main.bounds.width, height: 400)
+            Spacer()
             
-            Button(action: {
+            
+            HStack{
+                backButton
+                Spacer()
+                submitButton
+            }
+            
+        }
+    }
+    
+    private var submitButton: some View {
+        Button(action: {
+            if (selectedRectangles.count > 0) {
                 print("submit button tapped")
                 print(selectedRectangles)
-            }) {
-                Label {
-                    
-                } icon: {
-                    Image(systemName: selectedRectangles.count > 0 ? "checkmark.circle" : "xmark.circle")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundColor(.blackInLight)
-                }
+                dismiss()
+            } else {
+                showAlert = true
             }
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
-            .padding()
-            Spacer()
+        }) {
+            Text("Submit")
+                .scaledToFit()
+                .font(.system(size: 20))
+                .foregroundColor(.blackInLight)
+        }
+        .frame(width: 100, height: 100)
+        .clipShape(Circle())
+        .padding(.trailing, 20)
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("FoodVision"),
+                message: Text("Select at least one food"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
     
@@ -47,6 +65,7 @@ struct FoodSelectionView: View {
         }) {
             Label("Back", systemImage: "chevron.backward")
                 .padding()
+                .font(.system(size: 20))
                 .foregroundColor(.blackInLight)
                 .cornerRadius(8)
         }
@@ -57,7 +76,8 @@ struct FoodSelectionView: View {
         Group {
             Image(uiImage: image)
                 .resizable()
-                .scaledToFit()
+                .frame(width: UIScreen.main.bounds.width, height: 400)
+                .aspectRatio(contentMode: .fill)
         }
     }
     
@@ -95,8 +115,9 @@ struct FoodSelectionView: View {
         (300, 300, 330, 380),
         (200, 300, 270, 330)
     ]
+    @State var sr: Set<Int> = []
     if let img = UIImage(named: "botpfp") {
-        FoodSelectionView(rectangles: buttonPositions, image: img)
+        FoodSelectionView(selectedRectangles: $sr, rectangles: buttonPositions, image: img)
     } else {
         Text("No image found")
     }

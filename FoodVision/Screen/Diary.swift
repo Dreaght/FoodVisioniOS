@@ -4,8 +4,10 @@ struct Diary: View {
     @State private var showCamera = false  // Track if camera is open
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
-    @State private var foodFragments: [(image: UIImage, name: String, calories: Int)] = []
-
+    @State private var foodFragments: [FoodRegion] = []
+    @State private var selectedRegionIndex: Set<Int> = []
+    @State private var processor: DummyFoodProcessor?
+    
     var body: some View {
         VStack {
             HStack {
@@ -32,18 +34,27 @@ struct Diary: View {
             MealView(showCamera: $showCamera, foodItems: $foodFragments)  // Pass foodFragments to MealView
 
         }
-        .sheet(isPresented: $showCamera) {
+        .sheet(isPresented: $showCamera, onDismiss: {
+            if processor != nil {
+                foodFragments += processor?.cropSelectedFood(seletedIndices: Array(selectedRegionIndex)) ?? []
+            }
+            showFoodSelection = false
+            showCamera = false
+            selectedRegionIndex.removeAll()
+            processor = nil
+        }) {
             if !showFoodSelection {
                 CameraView(onImageCaptured: { image in
                     capturedImage = image
                     print("Captured Image: \(image)")
                     showFoodSelection = true
+                    processor = DummyFoodProcessor(frame: image)
                 })
             } else {
                 if let cimage = capturedImage {
-                    let processor = DummyFoodProcessor(frame: cimage)  // capturedImage is the UIImage you captured
-                    let regions = processor.detectFoods()
-                    FoodSelectionView(rectangles: regions, image: cimage)
+                    let regions = processor!.detectFoods()
+                    
+                    FoodSelectionView(selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
                 } else {
                     Text("No Image Captured")
                 }

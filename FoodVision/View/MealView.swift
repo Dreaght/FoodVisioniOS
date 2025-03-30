@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MealView: View {
     @Binding var showCamera: Bool
-    @Binding var foodItems: [(image: UIImage, name: String, calories: Int)]  // Pass food items
+    @Binding var foodItems: [FoodRegion]  // Pass food items
     
     var body: some View {
         GeometryReader { proxy in
@@ -18,7 +18,7 @@ struct MealView: View {
 
 struct MealSectionView: View {
     let mealName: String
-    @Binding public var foods: [(image: UIImage, name: String, calories: Int)]  // Pass food items
+    @Binding public var foods: [FoodRegion]  // Pass food items
     @Binding var showCamera: Bool
     
     private func addFood() {
@@ -60,8 +60,8 @@ struct MealSectionView: View {
                             .foregroundStyle(Color.gray)
                             .padding()
                     } else {
-                        ForEach(foods, id: \.name) { food in
-                            FoodItemView(foodImage: food.image, foodName: food.name, calories: food.calories)
+                        ForEach(foods, id: \.id) { food in
+                            FoodItemView(foodImage: food.imageFragment, foodName: food.nutritionInfo.name, calories: food.nutritionInfo.calories)
                         }
                     }
                 }

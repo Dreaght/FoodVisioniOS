@@ -33,7 +33,7 @@ class DummyFoodProcessor {
             let rect = CGRect(x: CGFloat((region.0 + region.2) / 2), y: CGFloat((region.1 + region.3) / 2),
                                           width: CGFloat((region.2 - region.0)), height: CGFloat((region.3 - region.1)))
             if let fragment = cropImage(image: image, rect: rect) {
-                let foodRegion = FoodRegion(rect: rect, imageFragment: fragment, nutritionInfo: NutritionInfo(name: "Sample Food", calories: 100))
+                let foodRegion = FoodRegion(imageFragment: fragment, nutritionInfo: NutritionInfo(name: "Sample Food", calories: 100))
                 result.append(foodRegion)
             }
         }
@@ -80,7 +80,7 @@ class DummyFoodProcessor {
 
 // Helper structs
 struct FoodRegion {
-    let rect: CGRect
+    let id = UUID().uuidString
     let imageFragment: UIImage
     let nutritionInfo: NutritionInfo
 }
