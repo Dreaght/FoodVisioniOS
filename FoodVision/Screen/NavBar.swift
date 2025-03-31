@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 extension UIImage {
     static func gradientImageWithBounds(bounds: CGRect, colors: [CGColor]) -> UIImage {
@@ -28,7 +29,8 @@ struct NavBar: View {
             LoginScreen()
         } else {
             TabView {
-                NavigationStack {                        Diary(diaryPage: $diaryData) // Pass a binding
+                NavigationStack {                        Diary(diaryPage: $diaryData)
+                        .modelContainer(for: DiaryDailyDataPoint.self)
                 }
                 .tabItem {
                     Label("Diary", systemImage: "house")

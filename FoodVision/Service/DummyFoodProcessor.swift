@@ -37,7 +37,7 @@ class DummyFoodProcessor {
             let rect = CGRect(x: CGFloat((region.0 + region.2) / 2), y: CGFloat((region.1 + region.3) / 2),
                                           width: CGFloat((region.2 - region.0)), height: CGFloat((region.3 - region.1)))
             if let fragment = cropImage(image: image, rect: rect) {
-                foodInfos[index].image = fragment
+                foodInfos[index].imageData = fragment.toPNGData()
                 let foodRegion = foodInfos[index]
                 result.append(foodRegion)
             }

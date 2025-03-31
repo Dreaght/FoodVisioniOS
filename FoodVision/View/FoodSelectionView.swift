@@ -8,26 +8,31 @@ struct FoodSelectionView: View {
     let image: UIImage
 
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Please select the food you want to log:")
-                .padding()
-            ZStack {
-                backgroundImage(img: image)
-                ForEach(0..<rectangles.count, id: \.self) { index in
-                    rectangleButton(for: index)
-                }
-            }
-            .frame(width: UIScreen.main.bounds.width, height: 400)
-            Spacer()
-            
-            
-            HStack{
-                backButton
+        ZStack {
+            Color.customDarkGray
+                .ignoresSafeArea(.all)
+            VStack {
                 Spacer()
-                submitButton
+                Text("Please select the food you want to log:")
+                    .padding()
+                    .foregroundStyle(.white)
+                ZStack {
+                    backgroundImage(img: image)
+                    ForEach(0..<rectangles.count, id: \.self) { index in
+                        rectangleButton(for: index)
+                    }
+                }
+                .frame(width: UIScreen.main.bounds.width, height: 400)
+                Spacer()
+                
+                
+                HStack{
+                    backButton
+                    Spacer()
+                    submitButton
+                }
+                
             }
-            
         }
     }
     
@@ -44,7 +49,7 @@ struct FoodSelectionView: View {
             Text("Submit")
                 .scaledToFit()
                 .font(.system(size: 20))
-                .foregroundColor(.blackInLight)
+                .foregroundColor(.white)
         }
         .frame(width: 100, height: 100)
         .clipShape(Circle())
@@ -66,7 +71,7 @@ struct FoodSelectionView: View {
             Label("Back", systemImage: "chevron.backward")
                 .padding()
                 .font(.system(size: 20))
-                .foregroundColor(.blackInLight)
+                .foregroundColor(.white)
                 .cornerRadius(8)
         }
         .padding(.leading, 20)

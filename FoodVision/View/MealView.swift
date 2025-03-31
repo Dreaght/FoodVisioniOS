@@ -71,7 +71,7 @@ struct MealSectionView: View {
                             .padding()
                     } else {
                         ForEach(foods, id: \.id) { food in
-                            FoodItemView(foodImage: food.image, foodName: food.foodName, calories: food.calories)
+                            FoodItemView(foodImage: food.image ?? UIImage(), foodName: food.foodName, calories: food.calories)
                         }
                     }
                 }

@@ -1,5 +1,7 @@
 import Foundation
+import SwiftData
 
+@Model
 class DiaryDailyDataPoint: Identifiable {
     static private var existingDates: [String: DiaryDailyDataPoint] = [:] // Dictionary to track existing instances
     
@@ -20,7 +22,7 @@ class DiaryDailyDataPoint: Identifiable {
     }
     
     var id = UUID()
-    var date: String = ""
+    @Attribute(.unique) var date: String = ""
     var breakfast: [MealDataPoint] = []
     var lunch: [MealDataPoint] = []
     var dinner: [MealDataPoint] = []

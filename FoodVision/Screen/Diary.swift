@@ -1,6 +1,8 @@
 import SwiftUI
+import SwiftData
 
 struct Diary: View {
+    @Query var pages: [DiaryDailyDataPoint]
     @State private var showCamera = false  // Track if camera is open
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
@@ -10,7 +12,8 @@ struct Diary: View {
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
     @State private var selectedDate = Date()
-    
+    @Environment(\.modelContext) var modelContext
+
     // Define the date range
     private var startDate: Date {
         // February 1, 2025
@@ -96,26 +99,35 @@ struct Diary: View {
                 } else if (selectedMeal == "Dinner") {
                     diaryPage.dinner.append(contentsOf: foods)
                 }
+                modelContext.insert(diaryPage)
+                guard let _ = try? modelContext.save() else {
+                    print("Should not happen!!! save failed D:")
+                    return
+                }
             }
             showFoodSelection = false
             showCamera = false
             selectedRegionIndex.removeAll()
             processor = nil
         }) {
-            if !showFoodSelection {
-                CameraView(onImageCaptured: { image in
-                    capturedImage = image
-                    print("Captured Image: \(image)")
-                    showFoodSelection = true
-                    processor = DummyFoodProcessor(frame: image)
-                })
-            } else {
-                if let cimage = capturedImage {
-                    let regions = processor!.detectFoods()
-                    
-                    FoodSelectionView(selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
+            ZStack {
+                Color.customDarkGray
+                    .ignoresSafeArea(edges: .all)
+                if !showFoodSelection {
+                    CameraView(onImageCaptured: { image in
+                        capturedImage = image
+                        print("Captured Image: \(image)")
+                        showFoodSelection = true
+                        processor = DummyFoodProcessor(frame: image)
+                    })
                 } else {
-                    Text("No Image Captured")
+                    if let cimage = capturedImage {
+                        let regions = processor!.detectFoods()
+                        
+                        FoodSelectionView(selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
+                    } else {
+                        Text("No Image Captured")
+                    }
                 }
             }
         }
@@ -151,11 +163,11 @@ struct Diary: View {
         return "failed"
     }
 
-
 }
 
 #Preview {
     @Previewable @State var diaryEntry = DiaryDailyDataPoint.create(date: "2025-03-30")
     
     Diary(diaryPage: $diaryEntry)
+        .modelContainer(for: DiaryDailyDataPoint.self, inMemory: true)
 }
