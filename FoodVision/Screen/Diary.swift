@@ -92,13 +92,13 @@ struct Diary: View {
                     .ignoresSafeArea(edges: .all)
                 if !showFoodSelection {
                     CameraView(onImageCaptured: { image in
-                        var img = image.fixOrientation()
+                        let img = image.fixOrientation()
                         capturedImage = img
                         showFoodSelection = true
                         processor = DummyFoodProcessor(frame: img)
                     })
                 } else {
-                    if var cimage = capturedImage?.fixOrientation() {
+                    if let cimage = capturedImage?.fixOrientation() {
                         let regions = processor!.detectFoods()
                         FoodSelectionView(showFoodSelection: $showFoodSelection, selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
                     } else {
