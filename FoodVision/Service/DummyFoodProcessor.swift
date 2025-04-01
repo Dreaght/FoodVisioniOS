@@ -34,7 +34,6 @@ class DummyFoodProcessor {
         
         for index in seletedIndices {
             let region = foodRegions[index]
-            print("Region: \(region)")
             let rect = CGRect(origin: CGPoint(x: region.0, y: region.1), size: CGSize(width: region.2 - region.0, height: region.3 - region.1))
             if let fragment = cropImage(rect: rect) {
                 foodInfos[index].imageData = fragment.toPNGData()
@@ -101,17 +100,14 @@ class DummyFoodProcessor {
     // Crop the image based on the provided CGRect
     private func cropImage(rect: CGRect) -> UIImage? {
         guard let cgImage = image.cgImage else { return nil }
-
-        let cropZone = CGRect(x:rect.origin.x,
-                                  y:rect.origin.y,
-                                  width:rect.size.width,
-                                  height:rect.size.height)
-        print(cgImage.width, cgImage.height, image.size.width, image.size.height)
-        print(rect)
-        print(cropZone)
+        
+        // if CGImage is oriented then flip x and y
+        let cropZone = CGFloat(cgImage.height) == image.size.width ?
+                        CGRect(origin: CGPoint(x: rect.origin.y, y: rect.origin.x),
+                               size: CGSize(width:  rect.size.height, height: rect.size.width)) : rect
         let croppedCGImage = cgImage.cropping(to: cropZone)
         if let croppedCGImage = croppedCGImage {
-            return UIImage(cgImage: croppedCGImage)
+            return UIImage(cgImage: croppedCGImage, scale: image.scale, orientation: image.imageOrientation)
         }
         return nil
     }

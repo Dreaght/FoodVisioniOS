@@ -7,7 +7,7 @@ struct ReportScreen: View {
     
     var body: some View {
         let dateRange: ClosedRange<Date> = {
-            let startComponents = DateComponents(year: 2025, month: 1, day: 1)
+            let startComponents = DateComponents(year: 2025, month: 2, day: 1)
             let startDate = calendar.date(from: startComponents)!
             let endDate = Date() // Today's date
             return startDate...endDate
@@ -34,28 +34,29 @@ struct ReportScreen: View {
                        in: startDate...maxEndDate,
                        displayedComponents: [.date])
             .padding()
-            Button(action: {
-                            generateReport(startDate: startDate, endDate: endDate)
-                        }) {
-                            Text("Generate Report")
-                                .font(.headline)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(.customLightBlue)
-                                .foregroundColor(.customLightGray)
-                                .cornerRadius(8)
-                        }
-                        .padding()
+            Button(action: {                            generateReport()
+            }) {
+                Text("Generate Report")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(.customLightBlue)
+                    .foregroundColor(.customLightGray)
+                    .cornerRadius(8)
+            }
+            .padding()
             Spacer()
         }
         .padding()
         .navigationTitle("Report Generation")
     }
     
-    private func generateReport(startDate: Date, endDate: Date) {
-            // Implement your report generation logic here
-            print("Generating report from \(startDate) to \(endDate)")
-        }
+    private func generateReport() {
+        let sd = Diary.dateToString(date: startDate)
+        
+        let ed = Diary.dateToString(date: min(calendar.date(byAdding: .day, value: 6, to: startDate) ?? Date(), self.endDate))
+        print("Generating report from \(sd) to \(ed)")
+    }
 }
 
 #Preview {

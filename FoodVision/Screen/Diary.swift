@@ -92,13 +92,13 @@ struct Diary: View {
                     .ignoresSafeArea(edges: .all)
                 if !showFoodSelection {
                     CameraView(onImageCaptured: { image in
-                        capturedImage = image
-                        print("Captured Image: \(image)")
+                        var img = image.fixOrientation()
+                        capturedImage = img
                         showFoodSelection = true
-                        processor = DummyFoodProcessor(frame: image)
+                        processor = DummyFoodProcessor(frame: img)
                     })
                 } else {
-                    if let cimage = capturedImage {
+                    if var cimage = capturedImage?.fixOrientation() {
                         let regions = processor!.detectFoods()
                         FoodSelectionView(showFoodSelection: $showFoodSelection, selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
                     } else {
@@ -194,7 +194,6 @@ struct Diary: View {
     }
     
     func previousDay() -> String {
-        print("Previous day tapped")
         guard let date = Diary.stringToDate(date: diaryPage.date) else {
             print("invalid date")
             return "invalid date"
@@ -209,7 +208,6 @@ struct Diary: View {
     }
     
     func nextDay() -> String {
-        print("Next day tapped")
         guard let date = Diary.stringToDate(date: diaryPage.date) else {
             print("invalid date")
             return "invalid date"

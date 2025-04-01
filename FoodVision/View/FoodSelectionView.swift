@@ -83,7 +83,6 @@ struct FoodSelectionView: View {
             // Action for chevron button
             showFoodSelection = false
             selectedRectangles = []
-            print("Back button tapped")
         }) {
             Label("Back", systemImage: "chevron.backward")
                 .padding()

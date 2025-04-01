@@ -58,18 +58,15 @@ struct CameraView: View {
                 // Analyze or process the image if needed
                 // For now, just pass it back using the closure
                 onImageCaptured(img)
-//                dismiss()  // Close camera when image is captured
             }
         }
         .onChange(of: selectedItem, initial: false) {
             newItem, oldItem in
-            guard let newItem = newItem else { return }
             Task {
-                if let data = try? await newItem.loadTransferable(type: Data.self),
-                    let image = UIImage(data: data) {
+                if let data = try? await selectedItem?.loadTransferable(type: Data.self) {
+                    let image = UIImage(data: data)
                     self.selectedImage = image
                     onImageCaptured(selectedImage ?? UIImage())
-//                    dismiss()
                 }
             }
         }

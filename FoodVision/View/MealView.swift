@@ -47,7 +47,6 @@ struct MealSectionView: View {
                 Spacer()
                 Button(action: {
                     showCamera = true
-                    print("\(mealName): ", foods)
                     onMealSelected(mealName)
                 }) {
                     Image(systemName: "plus")

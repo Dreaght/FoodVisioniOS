@@ -10,7 +10,7 @@ struct FoodVision: App {
             if !isSignIn {
                 LoginScreen()
             } else {
-                WelcomeView()
+                NavBar()
             }
         }
     }
