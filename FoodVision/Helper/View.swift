@@ -14,17 +14,5 @@ extension View {
 
         return root
     }
-    
-    func stringToDate(date: String) -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let d = dateFormatter.date(from: date)
-        return d
-    }
-    
-    func dateToString(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd" // Set the desired format
-        return dateFormatter.string(from: date)
-    }
+        
 }

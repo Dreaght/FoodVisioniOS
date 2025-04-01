@@ -32,6 +32,7 @@ struct MealSectionView: View {
     let mealName: String
     @Binding public var foods: [MealDataPoint] // Pass food items
     @Binding var showCamera: Bool
+    @Environment(\.defaultMinListRowHeight) var minRowHeight
     var onMealSelected: (String) -> Void
 
     var body: some View {
@@ -63,21 +64,35 @@ struct MealSectionView: View {
             
             Spacer()
             // Scrollable food list
-            ScrollView {
-                VStack {
-                    if foods.isEmpty {
-                        Text("No food items added")
-                            .foregroundStyle(Color.gray)
-                            .padding()
-                    } else {
+            VStack {
+                if foods.isEmpty {
+                    Text("No food items added")
+                        .foregroundStyle(Color.gray)
+                        .padding()
+                    Spacer()
+                } else {
+                    List {
                         ForEach(foods, id: \.id) { food in
                             FoodItemView(foodImage: food.image ?? UIImage(), foodName: food.foodName, calories: food.calories)
+                                .ignoresSafeArea(.all)
+                                .frame(maxWidth: .infinity)
+                                .listRowInsets(.init(top: 0, leading: 10, bottom: 4, trailing: 10))
+                                .listRowSeparator(.hidden)
                         }
+                        .onDelete(perform: delete)
                     }
+                    .frame(maxWidth: .infinity)
+                    .listStyle(.inset)
                 }
-                .padding(.horizontal)
             }
+            .frame(maxWidth: .infinity)
+            Spacer()
+
         }
+    }
+    
+    func delete(at offsets: IndexSet) {
+        foods.remove(atOffsets: offsets)
     }
 }
 
@@ -109,13 +124,19 @@ struct FoodItemView: View {
         .background(.opacity(0.1))
         .cornerRadius(20)
         .shadow(radius: 1)
-        .padding(.horizontal, 10)
     }
 }
 
 #Preview {
-    @Previewable @State var dia = DiaryDailyDataPoint.create(date: "2025-03-30")
+    @Previewable @State var dia: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: "2025-03-30")
+    @Previewable @State var meal: MealDataPoint = MealDataPoint(image: UIImage(resource: .botpfp), foodName: "Sample food", calories: 100, transFat: 0, saturatedFat: 0, totalFat: 0, protein: 0, sugar: 0, cholesterol: 0, sodium: 0, calcium: 0, iodine: 0, iron: 0, magnesium: 0, potassium: 0, zinc: 0, vitaminA: 0, vitaminC: 0, vitaminD: 0, vitaminE: 0, vitaminK: 0, vitaminB1: 0, vitaminB2: 0, vitaminB3: 0, vitaminB5: 0, vitaminB6: 0, vitaminB7: 0, vitaminB9: 0, vitaminB12: 0)
 
+
+    Button("Add Meals") {
+        dia.addToBreakfast(meal: meal)
+        dia.addToLunch(meal: meal)
+        dia.addToDinner(meal: meal)
+    }
     MealView(showCamera: Binding.constant(false), foodItems: $dia) {
         sm in
         print(sm)

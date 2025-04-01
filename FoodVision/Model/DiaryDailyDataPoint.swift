@@ -62,7 +62,7 @@ class DiaryDailyDataPoint: Identifiable {
     var vitaminB9: Int = 0          // in micrograms mcg
     var vitaminB12: Double = 0      // in micrograms mcg
     
-    private func calculateDailyNutrition() {
+    func calculateDailyNutrition() {
         for i in breakfast {
             addToDaily(meal: i)
         }
@@ -74,31 +74,31 @@ class DiaryDailyDataPoint: Identifiable {
         }
     }
     
-    private func addToBreakfast(meal: MealDataPoint) {
+    func addToBreakfast(meal: MealDataPoint) {
         self.breakfast.append(meal)
     }
     
-    private func addToLunch(meal: MealDataPoint) {
+    func addToLunch(meal: MealDataPoint) {
         self.lunch.append(meal)
     }
     
-    private func addToDinner(meal: MealDataPoint) {
+    func addToDinner(meal: MealDataPoint) {
         self.dinner.append(meal)
     }
     
-    private func deleteFromBreakfast(withID id: UUID) {
+    func deleteFromBreakfast(withID id: UUID) {
         breakfast.removeAll { $0.id == id }
     }
     
-    private func deleteFromLunch(withID id: UUID) {
+    func deleteFromLunch(withID id: UUID) {
         lunch.removeAll { $0.id == id }
     }
     
-    private func deleteFromDinner(withID id: UUID) {
+    func deleteFromDinner(withID id: UUID) {
         dinner.removeAll { $0.id == id }
     }
     
-    private func addToDaily(meal: MealDataPoint) {
+    func addToDaily(meal: MealDataPoint) {
         self.calories += meal.calories
         self.transFat += meal.transFat
         self.saturatedFat += meal.saturatedFat
@@ -130,7 +130,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.vitaminB12 += meal.vitaminB12
     }
     
-    private func removeFromDaily(meal: MealDataPoint) {
+    func removeFromDaily(meal: MealDataPoint) {
         self.calories -= meal.calories
         self.transFat -= meal.transFat
         self.saturatedFat -= meal.saturatedFat
@@ -162,7 +162,7 @@ class DiaryDailyDataPoint: Identifiable {
         self.vitaminB12 -= meal.vitaminB12
     }
     
-    private func setAllToZero() {
+    func setAllToZero() {
         self.calories = 0
         self.transFat = 0
         self.saturatedFat = 0
