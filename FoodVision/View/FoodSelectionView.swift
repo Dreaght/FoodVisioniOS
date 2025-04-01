@@ -1,12 +1,28 @@
 import SwiftUI
 
 struct FoodSelectionView: View {
-    @Environment(\.dismiss) var dismiss  // Allows closing the sheet
+    @Environment(\.dismiss) var dismiss
+    @Binding var showFoodSelection: Bool
     @Binding var selectedRectangles: Set<Int>
     @State private var showAlert = false
     let rectangles: [(Int, Int, Int, Int)]
     let image: UIImage
-
+    let HEIGHT: CGFloat = 400
+    var scaledHeight: CGFloat {
+        return image.size.height * UIScreen.main.bounds.width / image.size.width
+    }
+    
+    var scaledCoords: [(CGFloat, CGFloat, CGFloat, CGFloat)] {
+        let ratio = scaledHeight > HEIGHT ? HEIGHT / image.size.height : UIScreen.main.bounds.width / image.size.width
+        return rectangles.map { (x1, y1, x2, y2) in
+            let scaledX1 = CGFloat(x1) * ratio
+            let scaledY1 = CGFloat(y1) * ratio
+            let scaledX2 = CGFloat(x2) * ratio
+            let scaledY2 = CGFloat(y2) * ratio
+            return (scaledX1, scaledY1, scaledX2, scaledY2)
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color.customDarkGray
@@ -17,12 +33,13 @@ struct FoodSelectionView: View {
                     .padding()
                     .foregroundStyle(.white)
                 ZStack {
-                    backgroundImage(img: image)
+                    backgroundImage(height: scaledHeight)
                     ForEach(0..<rectangles.count, id: \.self) { index in
                         rectangleButton(for: index)
                     }
                 }
-                .frame(width: UIScreen.main.bounds.width, height: 400)
+                .frame(width: scaledHeight > HEIGHT ? image.size.width * HEIGHT / image.size.height: UIScreen.main.bounds.width, height: scaledHeight > HEIGHT ? HEIGHT : scaledHeight)
+                .border(.blue)
                 Spacer()
                 
                 
@@ -39,8 +56,6 @@ struct FoodSelectionView: View {
     private var submitButton: some View {
         Button(action: {
             if (selectedRectangles.count > 0) {
-                print("submit button tapped")
-                print(selectedRectangles)
                 dismiss()
             } else {
                 showAlert = true
@@ -66,6 +81,8 @@ struct FoodSelectionView: View {
     private var backButton: some View {
         Button(action: {
             // Action for chevron button
+            showFoodSelection = false
+            selectedRectangles = []
             print("Back button tapped")
         }) {
             Label("Back", systemImage: "chevron.backward")
@@ -77,17 +94,22 @@ struct FoodSelectionView: View {
         .padding(.leading, 20)
     }
 
-    private func backgroundImage(img: UIImage) -> some View {
-        Group {
+    private func backgroundImage(height: CGFloat) -> some View {
+        if height > HEIGHT {
             Image(uiImage: image)
                 .resizable()
-                .frame(width: UIScreen.main.bounds.width, height: 400)
-                .aspectRatio(contentMode: .fill)
+                .scaledToFit()
+                .frame(height: HEIGHT)
+        } else {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: UIScreen.main.bounds.width)
         }
     }
     
     private func rectangleButton(for index: Int) -> some View {
-        let rect = rectangles[index]
+        let rect = scaledCoords[index]
         
         return Button(action: {
             toggleSelection(for: index)
@@ -119,11 +141,11 @@ struct FoodSelectionView: View {
         (50, 50, 100, 100),
         (150, 150, 200, 200),
         (125, 125, 150, 150),
-        (300, 300, 330, 380),
-        (200, 300, 270, 330)
+        (300, 175, 330, 190),
+        (200, 220, 270, 230)
     ]
-    if let img = UIImage(named: "botpfp") {
-        FoodSelectionView(selectedRectangles: $sr, rectangles: buttonPositions, image: img)
+    if let img = UIImage(named: "testBurger") {
+        FoodSelectionView(showFoodSelection: Binding.constant(true), selectedRectangles: $sr, rectangles: buttonPositions, image: img)
     } else {
         Text("No image found")
     }

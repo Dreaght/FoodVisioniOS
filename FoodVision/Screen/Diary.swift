@@ -57,6 +57,8 @@ struct Diary: View {
                         print("Should not happen!!! save failed D:")
                         return
                     }
+                } else {
+                    diaryPage.calculateDailyNutrition()
                 }
             }
 
@@ -98,8 +100,7 @@ struct Diary: View {
                 } else {
                     if let cimage = capturedImage {
                         let regions = processor!.detectFoods()
-                        
-                        FoodSelectionView(selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
+                        FoodSelectionView(showFoodSelection: $showFoodSelection, selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
                     } else {
                         Text("No Image Captured")
                     }

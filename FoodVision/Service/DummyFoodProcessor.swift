@@ -13,12 +13,12 @@ class DummyFoodProcessor {
     // Asynchronously detects food regions from the image
     func detectFoods() -> [(Int, Int, Int, Int)] {
         // Get the frame dimensions
-        let frameWidth = UIScreen.main.bounds.width
-        let frameHeight = 400
+        let frameWidth = image.size.width
+        let frameHeight = image.size.height
         
         // Generate 3 random regions
         foodRegions = (0..<3).map { _ in
-            createRandomRegion(frameWidth: Int(frameWidth), frameHeight: frameHeight)
+            createRandomRegion(frameWidth: Int(frameWidth), frameHeight: Int(frameHeight))
         }
         
         foodInfos = (0..<3).map { _ in
@@ -34,9 +34,9 @@ class DummyFoodProcessor {
         
         for index in seletedIndices {
             let region = foodRegions[index]
-            let rect = CGRect(x: CGFloat((region.0 + region.2) / 2), y: CGFloat((region.1 + region.3) / 2),
-                                          width: CGFloat((region.2 - region.0)), height: CGFloat((region.3 - region.1)))
-            if let fragment = cropImage(image: image, rect: rect) {
+            print("Region: \(region)")
+            let rect = CGRect(origin: CGPoint(x: region.0, y: region.1), size: CGSize(width: region.2 - region.0, height: region.3 - region.1))
+            if let fragment = cropImage(rect: rect) {
                 foodInfos[index].imageData = fragment.toPNGData()
                 let foodRegion = foodInfos[index]
                 result.append(foodRegion)
@@ -83,38 +83,37 @@ class DummyFoodProcessor {
     
     // Create random region within the image frame
     private func createRandomRegion(frameWidth: Int, frameHeight: Int) -> (Int, Int, Int, Int) {
-        let maxWidth = Int(Double(frameWidth) * 0.3)
-        let maxHeight = Int(Double(frameHeight) * 0.3)
+        let maxX1 = Int(frameWidth * 4 / 5)
+        let maxY1 = Int(frameHeight * 4 / 5)
         
-        // Ensure maxWidth and maxHeight are at least 50 to prevent issues
-        let constrainedMaxWidth = max(50, maxWidth)
-        let constrainedMaxHeight = max(50, maxHeight)
+        let x1 = Int.random(in: 0..<maxX1)
+        let y1 = Int.random(in: 0..<maxY1)
         
-        let x1 = Int.random(in: 0..<(frameWidth - constrainedMaxWidth))
-        let y1 = Int.random(in: 0..<(frameHeight - constrainedMaxHeight))
+        let width = Int.random(in: 0..<Int(frameWidth/5))
+        let height = Int.random(in: 0..<Int(frameHeight/5))
         
-        let width = max(50, Int.random(in: 50...constrainedMaxWidth))
-        let height = max(50, Int.random(in: 50...constrainedMaxHeight))
-        
-        let x2 = x1 + width // Bottom-right x-coordinate
-        let y2 = y1 + height // Bottom-right y-coordinate
+        let x2 = min(x1 + width, frameWidth) // Bottom-right x-coordinate
+        let y2 = min(y1 + height, frameHeight) // Bottom-right y-coordinate
         
         return (x1, y1, x2, y2) // Return the tuple with x1, y1, x2, y2
     }
     
     // Crop the image based on the provided CGRect
-    private func cropImage(image: UIImage, rect: CGRect) -> UIImage? {
+    private func cropImage(rect: CGRect) -> UIImage? {
         guard let cgImage = image.cgImage else { return nil }
-        
-        let x = Int(rect.origin.x)
-        let y = Int(rect.origin.y)
-        let width = Int(rect.size.width)
-        let height = Int(rect.size.height)
-        
-        let croppedCGImage = cgImage.cropping(to: CGRect(x: x, y: y, width: width, height: height))
+
+        let cropZone = CGRect(x:rect.origin.x,
+                                  y:rect.origin.y,
+                                  width:rect.size.width,
+                                  height:rect.size.height)
+        print(cgImage.width, cgImage.height, image.size.width, image.size.height)
+        print(rect)
+        print(cropZone)
+        let croppedCGImage = cgImage.cropping(to: cropZone)
         if let croppedCGImage = croppedCGImage {
             return UIImage(cgImage: croppedCGImage)
         }
         return nil
     }
+    
 }

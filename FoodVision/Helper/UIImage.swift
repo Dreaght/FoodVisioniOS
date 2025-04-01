@@ -9,4 +9,5 @@ extension UIImage {
     func toPNGData() -> Data? {
         return self.pngData()
     }
+    
 }
