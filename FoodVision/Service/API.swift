@@ -10,6 +10,7 @@ class API {
     @AppStorage("birthdate") var bday = Date()
     @AppStorage("gender") var gender = "Male"
     @AppStorage("targetweight") var targetweight = 60
+    let currentUser = Auth.auth().currentUser
     // Upload a single image as raw bytes
     func upload(_ image: Data) async throws -> MealDataPoint {
         let url = URL(string: "\(URL_BASE)/upload/")!
@@ -40,43 +41,17 @@ class API {
     }
 
     func chat(_ pages: [DiaryDailyDataPoint]) async throws -> String {
-        return try await uploadMultiple(pages, endpoint: "/chat/")
-    }
-
-    func report(_ pages: [DiaryDailyDataPoint]) async throws -> String {
-        return try await uploadMultiple(pages, endpoint: "/report/")
-    }
-
-    // Helper to handle multiple file uploads with Firebase token
-    private func uploadMultiple(_ pages: [DiaryDailyDataPoint], endpoint: String) async throws -> String {
-        let url = URL(string: "\(URL_BASE)\(endpoint)")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Populate user profile
-        let userProfile = populateUserProfile()
-        
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        
-        // Create a combined request object
-        let requestBody = ReportRequest(
-            userProfile: userProfile,
-            pages: makePages(pages: pages)
-        )
-
-        // Serialize to JSON
-        let jsonData = try encoder.encode(requestBody)
-        request.httpBody = jsonData
-
-        // Send the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        // Validate the response
-        try validate(response)
-
+        guard let currentUser = currentUser else {
+            print("No user is signed in.")
+            throw ParsingError.noUser
+        }
+        let (data, response) = try await uploadMultiple(pages, endpoint: "/chat/")
         // Handle the response data if needed
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
         if let responseString = String(data: data, encoding: .utf8) {
             return responseString
         } else {
@@ -84,6 +59,96 @@ class API {
         }
     }
 
+    func report(_ pages: [DiaryDailyDataPoint]) async throws -> UIImage {
+        // Upload and get the response data
+        guard let currentUser = currentUser else {
+            print("No user is signed in.")
+            throw ParsingError.noUser
+        }
+        
+        let (data, response) = try await uploadMultiple(pages, endpoint: "/report/")
+        
+        // Validate the response to ensure it's an image
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        // Check if the response data can be converted to a UIImage
+        guard let image = UIImage(data: data) else {
+            throw NSError(domain: "ImageErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not convert data to UIImage"])
+        }
+        
+        return image
+    }
+    
+    // Helper to handle multiple file uploads with Firebase token
+    private func uploadMultiple(_ pages: [DiaryDailyDataPoint], endpoint: String) async throws -> (Data, URLResponse) {
+        do {
+            let token = try await currentUser!.getIDToken(forcingRefresh: true)
+            let url = URL(string: "\(URL_BASE)\(endpoint)")!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            
+            // Populate user profile
+            let userProfile = populateUserProfile()
+            
+            let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToSnakeCase
+            
+            // Create a combined request object
+            let requestBody = ReportRequest(
+                userProfile: userProfile,
+                data: makePages(pages: pages)
+            )
+            
+            // Serialize to JSON
+            let jsonData = try encoder.encode(requestBody)
+            request.httpBody = jsonData
+            
+            logRequest(request)
+            
+            // Send the request
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            // Log the response for debugging
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Response status code: \(httpResponse.statusCode)")
+                if let responseBody = String(data: data, encoding: .utf8) {
+                    print("Response body: \(responseBody)")
+                }
+            }
+            
+            // Validate the response
+            try validate(response)
+            
+            return (data, response)
+        } catch {
+            print("Error during token retrieval or request: \(error.localizedDescription)")
+            throw ParsingError.invalidData
+        }
+    }
+
+    func logRequest(_ request: URLRequest) {
+        print("HTTP Method: \(request.httpMethod ?? "N/A")")
+        print("URL: \(request.url?.absoluteString ?? "N/A")")
+        
+        if let headers = request.allHTTPHeaderFields {
+            print("Headers: \(headers)")
+        }
+        
+        if let body = request.httpBody {
+            if let bodyString = String(data: body, encoding: .utf8) {
+                print("Body: \(bodyString)")
+            } else {
+                print("Body: [Data not convertible to String]")
+            }
+        }
+    }
+    
+    
     // Helper to validate HTTP responses
     private func validate(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -113,6 +178,7 @@ class API {
 
 enum ParsingError: Error {
     case invalidData
+    case noUser
 }
 
 struct UserProfile: Codable{
@@ -160,7 +226,7 @@ struct DiaryDailyPageForRequest: Codable {
 
 struct ReportRequest: Codable {
     let userProfile: UserProfile
-    let pages: [DiaryDailyPageForRequest]
+    let data: [DiaryDailyPageForRequest]
 }
 
 

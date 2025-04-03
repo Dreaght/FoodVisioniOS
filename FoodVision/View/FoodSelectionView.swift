@@ -73,7 +73,9 @@ struct FoodSelectionView: View {
             Alert(
                 title: Text("FoodVision"),
                 message: Text("Select at least one food"),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK")) {
+                    showAlert = false
+                }
             )
         }
     }

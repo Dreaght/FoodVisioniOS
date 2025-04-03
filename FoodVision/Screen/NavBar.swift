@@ -38,6 +38,7 @@ struct NavBar: View {
 
                 NavigationStack {
                     ReportScreen()
+                        .modelContainer(for: DiaryDailyDataPoint.self)
                 }
                 .tabItem {
                     Label("Reports", systemImage: "list.clipboard")
