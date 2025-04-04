@@ -6,7 +6,6 @@ import FirebaseAuth
 struct Settings: View {
     @State private var showPicker: Bool = false // Control visibility of the picker
     @State private var showLogoutOption: Bool = false
-    @State private var navigateToWelcome = false
     @AppStorage("height") var height = 170
     @AppStorage("currweight") var currweight = 70
     @AppStorage("birthdate") var bday = Date()
@@ -87,6 +86,7 @@ struct Settings: View {
                     do {
                         try Auth.auth().signOut()
                         UserDefaults.standard.set(false, forKey: "signIn")
+                        UserDefaults.standard.set(Auth.auth().currentUser?.uid ?? "no User id", forKey: "prevUid")
                     } catch let signOutError as NSError {
                         print("Error signing out: %@", signOutError.localizedDescription)
                     }

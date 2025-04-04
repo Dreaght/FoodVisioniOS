@@ -33,7 +33,7 @@ struct FoodSelectionView: View {
                 Text("Please select the food you want to log:")
                     .padding()
                     .foregroundStyle(.white)
-                    .background(Color.black.opacity(0.6))
+                    .background(.customDarkGray.opacity(0.6))
                     .cornerRadius(10)
                 
                 Spacer()
@@ -74,9 +74,9 @@ struct FoodSelectionView: View {
         }) {
             Text("Submit")
                 .font(.system(size: 20))
-                .foregroundColor(.white)
+                .foregroundColor(selectedRectangles.isEmpty ? .red : .white)
                 .padding()
-                .background(Color.blue)
+                .background(.customDarkGray.opacity(0.6))
                 .clipShape(Capsule())
         }
     }
@@ -90,7 +90,7 @@ struct FoodSelectionView: View {
                 .padding()
                 .font(.system(size: 20))
                 .foregroundColor(.white)
-                .background(Color.gray.opacity(0.6))
+                .background(.customDarkGray.opacity(0.6))
                 .clipShape(Capsule())
         }
     }

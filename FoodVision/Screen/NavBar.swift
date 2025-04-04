@@ -17,51 +17,46 @@ extension UIImage {
 
 struct NavBar: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("signIn") var isSignIn = false
 
     init() {
         updateAppearance(for: UITraitCollection.current.userInterfaceStyle)
     }
 
     var body: some View {
-        if !isSignIn {
-            LoginScreen()
-        } else {
-            TabView {
-                NavigationStack {
-                    Diary()
-                        .modelContainer(for: DiaryDailyDataPoint.self)
-                }
-                .tabItem {
-                    Label("Diary", systemImage: "house")
-                }
-
-                NavigationStack {
-                    ReportScreen()
-                        .modelContainer(for: DiaryDailyDataPoint.self)
-                }
-                .tabItem {
-                    Label("Reports", systemImage: "list.clipboard")
-                }
-
-                NavigationStack {
-                    ChatBot()
-                }
-                .tabItem {
-                    Label("Chat", systemImage: "bubble.left.and.text.bubble.right")
-                }
-
-                NavigationStack {
-                    Settings()
-                }
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
+        TabView {
+            NavigationStack {
+                Diary()
+                    .modelContainer(for: DiaryDailyDataPoint.self)
             }
-            .tint(Color.customLightBlue)
-            .onAppear {
-                updateAppearance(for: colorScheme == .dark ? .dark : .light)
+            .tabItem {
+                Label("Diary", systemImage: "house")
             }
+
+            NavigationStack {
+                ReportScreen()
+                    .modelContainer(for: DiaryDailyDataPoint.self)
+            }
+            .tabItem {
+                Label("Reports", systemImage: "list.clipboard")
+            }
+
+            NavigationStack {
+                ChatBot()
+            }
+            .tabItem {
+                Label("Chat", systemImage: "bubble.left.and.text.bubble.right")
+            }
+
+            NavigationStack {
+                Settings()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape")
+            }
+        }
+        .tint(Color.customLightBlue)
+        .onAppear {
+            updateAppearance(for: colorScheme == .dark ? .dark : .light)
         }
     }
 

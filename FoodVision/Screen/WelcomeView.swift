@@ -16,6 +16,7 @@ struct WelcomeView: View {
     @State private var showBodyPropertionsView: Bool = false
     @State private var disableGenderSelection: Bool = false
     @State private var showBirthDatePicker: Bool = false
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ZStack {
@@ -149,7 +150,16 @@ struct WelcomeView: View {
         
     }
     
+    private func eraseDB() {
+        do {
+            try modelContext.delete(model: DiaryDailyDataPoint.self)
+        } catch {
+            print("Failed to clear all DiaryDailyDataPoint data.")
+        }
+    }
+    
     func doShowMainApp() {
+        eraseDB()
         withAnimation(.easeOut(duration: 1)) {
             // Fade out the UI before switching to the NavBar
             mainUIOpacity = 0
