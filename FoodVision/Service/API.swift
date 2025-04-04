@@ -41,17 +41,34 @@ class API {
     }
 
     func chat(_ pages: [DiaryDailyDataPoint]) async throws -> String {
+        print("Starting chat")
+        
         guard let currentUser = currentUser else {
             print("No user is signed in.")
             throw ParsingError.noUser
         }
-        let (data, response) = try await uploadMultiple(pages, endpoint: "/chat/")
-        // Handle the response data if needed
+
+        // Prepare the payload (like curl would do)
+        let payload = try prepareChatPayload(pages: pages)
+
+        let token = try await currentUser.getIDToken(forcingRefresh: true)
+        let url = URL(string: "\(URL_BASE)/chat")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+        request.httpBody = payload.data(using: .utf8)
+
+        // Send the request
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        // Validate the response
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
         }
-        
+
+        // Convert the response data to a String and return
         if let responseString = String(data: data, encoding: .utf8) {
             return responseString
         } else {
@@ -59,14 +76,52 @@ class API {
         }
     }
 
+    private func prepareChatPayload(pages: [DiaryDailyDataPoint]) throws -> String {
+        // Create the payload as a string for the /chat endpoint
+        var payload = ""
+        for page in pages {
+            let breakfast = page.breakfast.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+            let lunch = page.lunch.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+            let dinner = page.dinner.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+
+            payload += """
+            Date: \(page.date)
+            Breakfast: \(breakfast)
+            Lunch: \(lunch)
+            Dinner: \(dinner)
+
+            """
+        }
+        return payload
+    }
+
+
     func report(_ pages: [DiaryDailyDataPoint]) async throws -> UIImage {
         // Upload and get the response data
         guard let currentUser = currentUser else {
             print("No user is signed in.")
             throw ParsingError.noUser
         }
-        
-        let (data, response) = try await uploadMultiple(pages, endpoint: "/report/")
+
+        // Prepare the payload as a string (similar to the `curl --data "your_payload"`)
+        let payload = try prepareReportPayload(pages: pages)
+
+        let token = try await currentUser.getIDToken(forcingRefresh: true)
+        let url = URL(string: "\(URL_BASE)/report")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+        request.httpBody = payload.data(using: .utf8)
+
+        // Send the request
+        let (data, response) = try await URLSession.shared.data(for: request)
         
         // Validate the response to ensure it's an image
         guard let httpResponse = response as? HTTPURLResponse,
@@ -81,6 +136,32 @@ class API {
         
         return image
     }
+
+    private func prepareReportPayload(pages: [DiaryDailyDataPoint]) throws -> String {
+        // Create the payload as a string, similar to the payload that curl would send
+        var payload = ""
+        for page in pages {
+            let breakfast = page.breakfast.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+            let lunch = page.lunch.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+            let dinner = page.dinner.map { meal in
+                "\(meal.foodName): \(meal.calories) calories"
+            }.joined(separator: ", ")
+
+            payload += """
+            Date: \(page.date)
+            Breakfast: \(breakfast)
+            Lunch: \(lunch)
+            Dinner: \(dinner)
+
+            """
+        }
+        return payload
+    }
+
     
     // Helper to handle multiple file uploads with Firebase token
     private func uploadMultiple(_ pages: [DiaryDailyDataPoint], endpoint: String) async throws -> (Data, URLResponse) {
