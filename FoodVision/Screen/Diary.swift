@@ -1,10 +1,9 @@
 import SwiftUI
-import FirebaseAuth
 import SwiftData
 
 struct Diary: View {
     @Query(sort: \DiaryDailyDataPoint.date) var pages: [DiaryDailyDataPoint]
-    @State private var showCamera = false
+    @State private var showCamera = false  // Track if camera is open
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
@@ -14,51 +13,48 @@ struct Diary: View {
     @State private var showDatePicker = false
     @State private var selectedDate = Date()
     @Environment(\.modelContext) var modelContext
-    @State private var restartNavBar = false
 
-
+    // Define the date range
     private var startDate: Date {
+        // February 1, 2025
         let calendar = Calendar.current
         return calendar.date(from: DateComponents(year: 2025, month: 2, day: 1))!
     }
-
+        
     private var endDate: Date {
+        // Today's date
         return Date()
     }
-
     private var mealsCount: [Int] { [
         diaryPage.breakfast.count,
         diaryPage.lunch.count,
         diaryPage.dinner.count
-    ] }
-
+    ]
+    }
+    
     var body: some View {
         VStack {
             HStack {
                 Spacer()
                 previousDayButton
-                    .padding()
+                .padding()
                 Spacer()
                 diaryPageDate
                 Spacer()
                 nextDayButton
-                    .padding()
+                .padding()
                 Spacer()
             }
-
-            MealView(showCamera: $showCamera, foodItems: $diaryPage) {
+            
+            MealView(showCamera: $showCamera, foodItems: $diaryPage)  {
                 sm in
                 selectedMeal = sm
             }
-            .onChange(of: mealsCount, initial: false) { old, new in
+            .onChange(of: mealsCount, initial: false) { old, new  in
                 if mealsCount.allSatisfy({ $0 == 0 }) {
                     modelContext.delete(diaryPage)
-                    // Create a new page if diaryPage is deleted
-                    let newPage = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
-                    diaryPage = newPage
-                    modelContext.insert(newPage)
                     guard let _ = try? modelContext.save() else {
-                        print("Save failed!")
+                        print("Should not happen!!! save failed D:")
                         return
                     }
                 } else {
@@ -68,22 +64,21 @@ struct Diary: View {
 
         }
         .onAppear {
-            checkAndResetUserData()
             initializeDiaryPage()
         }
         .sheet(isPresented: $showCamera, onDismiss: {
             if processor != nil {
                 let foods = processor!.cropSelectedFood(seletedIndices: Array(selectedRegionIndex))
-                if selectedMeal == "Breakfast" {
+                if (selectedMeal == "Breakfast") {
                     diaryPage.breakfast.append(contentsOf: foods)
-                } else if selectedMeal == "Lunch" {
+                } else if (selectedMeal == "Lunch") {
                     diaryPage.lunch.append(contentsOf: foods)
-                } else if selectedMeal == "Dinner" {
+                } else if (selectedMeal == "Dinner") {
                     diaryPage.dinner.append(contentsOf: foods)
                 }
                 modelContext.insert(diaryPage)
                 guard let _ = try? modelContext.save() else {
-                    print("Save failed!")
+                    print("Should not happen!!! save failed D:")
                     return
                 }
             }
@@ -113,35 +108,7 @@ struct Diary: View {
             }
         }
     }
-
-    private func checkAndResetUserData() {
-        let currentUserID = Auth.auth().currentUser?.uid
-        let storedUserID = UserDefaults.standard.string(forKey: "previousUserID")
-
-        if currentUserID != storedUserID {
-            if !pages.isEmpty {
-                for page in pages {
-                    modelContext.delete(page)
-                }
-                // After deleting, create and insert a new page
-                let newPage = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
-                modelContext.insert(newPage)
-                diaryPage = newPage
-                do {
-                    try modelContext.save()
-                } catch {
-                    print("Failed to delete previous data or insert new page: \(error)")
-                    return
-                }
-            }
-            UserDefaults.standard.set(currentUserID, forKey: "previousUserID")
-
-            // Reset the diaryPage to avoid using a destroyed instance
-            diaryPage = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
-        }
-    }
-
-
+    
     private func initializeDiaryPage() {
         if pages.isEmpty {
             diaryPage = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
@@ -151,12 +118,11 @@ struct Diary: View {
             diaryPage = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
         }
     }
-
-
+    
     private func indexInPages(_ date: String) -> Int? {
         return pages.firstIndex(where: { $0.date == date })
     }
-
+    
     private var previousDayButton: some View {
         Button(action: {
             if diaryPage.date != Diary.dateToString(date: startDate) {
@@ -173,7 +139,7 @@ struct Diary: View {
                 .foregroundStyle(Color.primary.opacity(0.5))
         }
     }
-
+    
     private var diaryPageDate: some View {
         Text(diaryPage.date)
             .font(.title)
@@ -193,7 +159,7 @@ struct Diary: View {
                         .padding()
 
                     Button("Done") {
-                        showDatePicker = false
+                        showDatePicker = false // Dismiss the sheet
                         let sd = Diary.dateToString(date: selectedDate)
                         if let index = indexInPages(sd) {
                             diaryPage = pages[index]
@@ -209,11 +175,10 @@ struct Diary: View {
                 .padding()
             }
     }
-
-
+    
     private var nextDayButton: some View {
         Button(action: {
-            if diaryPage.date != Diary.dateToString(date: endDate) {
+            if (diaryPage.date != Diary.dateToString(date: endDate)) {
                 let tmr = nextDay()
                 if let index = indexInPages(tmr) {
                     diaryPage = pages[index]
@@ -227,7 +192,7 @@ struct Diary: View {
                 .foregroundStyle(Color.primary.opacity(0.5))
         }
     }
-
+    
     func previousDay() -> String {
         guard let date = Diary.stringToDate(date: diaryPage.date) else {
             print("invalid date")
@@ -235,36 +200,41 @@ struct Diary: View {
         }
         let calendar = Calendar.current
         if let yesterday = calendar.date(byAdding: .day, value: -1, to: date) {
-            return Diary.dateToString(date: yesterday)
+            // Format yesterday's date back to a string
+            let prev = Diary.dateToString(date: yesterday)
+            return prev
         }
         return "failed to convert date to string"
     }
-
+    
     func nextDay() -> String {
         guard let date = Diary.stringToDate(date: diaryPage.date) else {
             print("invalid date")
             return "invalid date"
         }
         let calendar = Calendar.current
-        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: date) {
-            return Diary.dateToString(date: tomorrow)
+        if let tmr = calendar.date(byAdding: .day, value: 1, to: date) {
+            // Format yesterday's date back to a string
+            let tomorrow = Diary.dateToString(date: tmr)
+            return tomorrow
         }
         return "failed"
     }
-
+    
     static func dateToString(date: Date) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd" // Set the desired format
         return dateFormatter.string(from: date)
     }
-
+    
     static func stringToDate(date: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter.date(from: date)
+        let d = dateFormatter.date(from: date)
+        return d
     }
+    
 }
-
 
 #Preview {
     @Previewable @State var diaryEntry = DiaryDailyDataPoint.create(date: "2025-03-30")

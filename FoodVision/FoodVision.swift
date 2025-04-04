@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftData
 import FirebaseAuth
 
 @main
@@ -23,8 +22,17 @@ struct FoodVision: App {
                         }
                 } else {
                     if isSignedIn {
-                        NavBar()
-                        
+                        if isAccountExist || getUID() == prevUid {
+                            if getUID() == prevUid {
+                                NavBar()
+                            } else{
+                                WelcomeView()
+                                    .modelContainer(for: DiaryDailyDataPoint.self)
+                            }
+                        } else {
+                            WelcomeView()
+                                .modelContainer(for: DiaryDailyDataPoint.self)
+                        }
                     } else {
                         LoginScreen()
                     }
@@ -50,6 +58,7 @@ struct FoodVision: App {
     
     private func verifyAccountExists() async -> Bool {
         if let currentUser = Auth.auth().currentUser {
+            prevUid = currentUser.uid
             do {
                 // Attempt to get a fresh token
                 let token = try await currentUser.getIDToken(forcingRefresh: true)
@@ -69,11 +78,4 @@ struct FoodVision: App {
             return false
         }
     }
-
-    // This method will reset your entire database by clearing all data.
-    // Function to reset or reinitialize the SwiftData model container
-    
-
-
-
 }
