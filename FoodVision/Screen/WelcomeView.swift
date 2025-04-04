@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAuth
 
 struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -150,16 +151,7 @@ struct WelcomeView: View {
         
     }
     
-    private func eraseDB() {
-        do {
-            try modelContext.delete(model: DiaryDailyDataPoint.self)
-        } catch {
-            print("Failed to clear all DiaryDailyDataPoint data.")
-        }
-    }
-    
     func doShowMainApp() {
-        eraseDB()
         withAnimation(.easeOut(duration: 1)) {
             // Fade out the UI before switching to the NavBar
             mainUIOpacity = 0
@@ -172,6 +164,8 @@ struct WelcomeView: View {
             UserDefaults.standard.set(weight, forKey: "currweight")
             UserDefaults.standard.set(birthDate, forKey: "birthdate")
             UserDefaults.standard.set(String(selectedGender ?? "Male"), forKey: "gender")
+            let currUid = Auth.auth().currentUser?.uid
+            UserDefaults.standard.set(String(currUid!), forKey: "prevUid")
         }
     }
 }
