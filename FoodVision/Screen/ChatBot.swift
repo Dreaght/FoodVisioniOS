@@ -1,18 +1,53 @@
 import SwiftUI
+import SwiftData
 import SDWebImageSwiftUI
 import FirebaseAuth
 
 struct ChatBot: View {
-    
+    @Environment(\.modelContext) var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var vm = ViewModel(api: "backend API")
+    @StateObject var vm = ViewModel()
     @FocusState var isTextFieldFocused: Bool
-    
+    @State var isLoading: Bool = true
     var body: some View {
-        NavigationStack() {
-            chatListView
+        if isLoading {
+            ProgressView("Loading diary from database")
                 .navigationTitle("Assistant")
+                .onAppear {
+                    Task {
+                        vm.pages = await populatePages()
+                        isLoading = false
+                    }
+                }
+        } else {
+            NavigationStack() {
+                chatListView
+                    .navigationTitle("Assistant")
+            }
         }
+        
+    }
+    
+    private func populatePages() async -> [DiaryDailyDataPoint] {
+        let calendar = Calendar.current
+
+        let today = Date()
+        
+        // Calculate the start date (7 days ago from today)
+        let startDate = calendar.date(byAdding: .day, value: -6, to: today) ?? today
+        
+        // Format the start and end dates as strings
+        let sd = Diary.dateToString(date: startDate)
+        let ed = Diary.dateToString(date: today)
+        // Fetch data points from the last 7 days
+        let fetchDescriptor = FetchDescriptor<DiaryDailyDataPoint>(predicate: #Predicate { $0.date >= sd && $0.date <= ed })
+        do {
+            let pages = try modelContext.fetch(fetchDescriptor)
+            return pages
+        } catch {
+            print("Error fetching from db: \(error)")
+        }
+        return []
     }
     
     var chatListView: some View {

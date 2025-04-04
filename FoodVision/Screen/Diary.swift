@@ -7,7 +7,7 @@ struct Diary: View {
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
-    @State private var processor: DummyFoodProcessor?
+    @State private var processor: BackendFoodProcessor?
     @State var diaryPage: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: dateToString(date: Date()))
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
@@ -95,12 +95,27 @@ struct Diary: View {
                         let img = image.fixOrientation()
                         capturedImage = img
                         showFoodSelection = true
-                        processor = DummyFoodProcessor(frame: img)
+                        processor = BackendFoodProcessor(frame: img)
                     })
                 } else {
                     if let cimage = capturedImage?.fixOrientation() {
-                        let regions = processor!.detectFoods()
-                        FoodSelectionView(showFoodSelection: $showFoodSelection, selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
+                        var isLoading = true
+                        var regions: [(Int, Int, Int, Int)] = []
+                        if isLoading {
+                            ProgressView("Processing Image...")
+                                .onAppear {
+                                    Task {
+                                        regions = try await processor!.detectFoods()
+                                        isLoading = false
+                                    }
+                                }
+                        } else {
+                            if regions.isEmpty {
+                                Text("Failed to analyze image")
+                            } else {
+                                FoodSelectionView(showFoodSelection: $showFoodSelection, selectedRectangles: $selectedRegionIndex, rectangles: regions, image: cimage)
+                            }
+                        }
                     } else {
                         Text("No Image Captured")
                     }

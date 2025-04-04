@@ -7,15 +7,10 @@ class ViewModel: ObservableObject {
     @Published var isInteractingWithChatGPT = false
     @Published var messages: [MessageRow] = []
     @Published var inputMessage: String = ""
-    private let calendar = Calendar.current
-    @Environment(\.modelContext) private var modelContext
-
-
+    @Published var pages: [DiaryDailyDataPoint] = []
     
-    private var api: String = "backend api"
-    
-    init(api: String) {
-        self.api = api
+    init() {
+        
     }
     
     @MainActor
@@ -37,13 +32,13 @@ class ViewModel: ObservableObject {
     @MainActor
     private func send(text: String) async {
         isInteractingWithChatGPT = true
-        var streamText = "dummy text"
+        let gptResponse = ""
         var messageRow: MessageRow = MessageRow(
             isInteractingWithChatGPT: true,
             sendImage: Auth.auth().currentUser?.photoURL,
             sendText: text,
             responseImage: "botpfp",
-            responseText: streamText,
+            responseText: gptResponse,
             responseError: nil
         )
         self.messages.append(messageRow)
@@ -51,7 +46,7 @@ class ViewModel: ObservableObject {
         do {
             let message = await chat()
             
-            messageRow.responseText = streamText
+            messageRow.responseText = message
             self.messages[self.messages.count - 1] = messageRow
         }
         
@@ -61,23 +56,10 @@ class ViewModel: ObservableObject {
     }
     
     func chat() async -> String {
-        // Get today's date
-        let today = Date()
-        
-        // Calculate the start date (7 days ago from today)
-        let startDate = calendar.date(byAdding: .day, value: -6, to: today) ?? today
-        
-        // Format the start and end dates as strings
-        let sd = await Diary.dateToString(date: startDate)
-        let ed = await Diary.dateToString(date: today)
         
         let api = API()
         
         do {
-            // Fetch data points from the last 7 days
-            let fetchDescriptor = FetchDescriptor<DiaryDailyDataPoint>(predicate: #Predicate { $0.date >= sd && $0.date <= ed })
-            let pages = try modelContext.fetch(fetchDescriptor)
-            
             // If there are pages, call the API to get the chat message
             if !pages.isEmpty {
                 let responseMessage = try await api.chat(pages)

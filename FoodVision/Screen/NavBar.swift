@@ -42,6 +42,7 @@ struct NavBar: View {
 
             NavigationStack {
                 ChatBot()
+                    .modelContainer(for: DiaryDailyDataPoint.self)
             }
             .tabItem {
                 Label("Chat", systemImage: "bubble.left.and.text.bubble.right")

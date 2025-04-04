@@ -11,35 +11,50 @@ class API {
     @AppStorage("gender") var gender = "Male"
     @AppStorage("targetweight") var targetweight = 60
     let currentUser = Auth.auth().currentUser
+    
+    
     // Upload a single image as raw bytes
-    func upload(_ image: Data) async throws -> MealDataPoint {
+    func upload(_ image: Data) async throws -> [Region] {
+        guard let currentUser = currentUser else {
+            print("No user is signed in.")
+            throw ParsingError.noUser
+        }
+        let token = try await currentUser.getIDToken(forcingRefresh: true)
         let url = URL(string: "\(URL_BASE)/upload/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
         request.httpBody = image
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let (data, response) = try await URLSession.shared.data(for: request)
+        print(data, response)
         try validate(response)
+        
+        // Convert response data to string
+        guard let jsonString = String(data: data, encoding: .utf8) else {
+            print("failed parsing from data to string")
+            throw ParsingError.invalidData
+        }
+        
+        // Convert jsonString back to Data
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("failed convert jsonString back to Data")
+            throw ParsingError.invalidData
+        }
+
+        // Decode JSON data
         do {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let uiImage = UIImage(data: image)
-            let decodedData = try decoder.decode(MealDataPointResponse.self, from: data)
-            return MealDataPoint(image: uiImage, foodName: decodedData.foodName, calories: decodedData.calories, transFat: decodedData.transFat,
-                                 saturatedFat: decodedData.saturatedFat, totalFat: decodedData.totalFat, protein: decodedData.protein,
-                                 sugar: decodedData.sugar, cholesterol: decodedData.cholesterol, sodium: decodedData.sodium,
-                                 calcium: decodedData.calcium, iodine: decodedData.iodine, iron: decodedData.iron,
-                                 magnesium: decodedData.magnesium, potassium: decodedData.potassium, zinc: decodedData.zinc,
-                                 vitaminA: decodedData.vitaminA, vitaminC: decodedData.vitaminC, vitaminD: decodedData.vitaminD,
-                                 vitaminE: decodedData.vitaminE, vitaminK: decodedData.vitaminK, vitaminB1: decodedData.vitaminB1,
-                                 vitaminB2: decodedData.vitaminB2, vitaminB3: decodedData.vitaminB3, vitaminB5: decodedData.vitaminB5,
-                                 vitaminB6: decodedData.vitaminB6, vitaminB7: decodedData.vitaminB7, vitaminB9: decodedData.vitaminB9, vitaminB12: decodedData.vitaminB12)
+            let decodedData = try decoder.decode(UploadResponse.self, from: jsonData)
+            return decodedData.regions
         } catch {
             throw ParsingError.invalidData
         }
     }
-
+    
+    
     func chat(_ pages: [DiaryDailyDataPoint]) async throws -> String {
         print("Starting chat")
         
@@ -50,7 +65,7 @@ class API {
 
         // Prepare the payload (like curl would do)
         let payload = try prepareChatPayload(pages: pages)
-
+        print(payload)
         let token = try await currentUser.getIDToken(forcingRefresh: true)
         let url = URL(string: "\(URL_BASE)/chat")!
         var request = URLRequest(url: url)
@@ -61,7 +76,6 @@ class API {
 
         // Send the request
         let (data, response) = try await URLSession.shared.data(for: request)
-
         // Validate the response
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
@@ -285,6 +299,20 @@ struct ReportRequest: Codable {
     let data: [DiaryDailyPageForRequest]
 }
 
+struct UploadResponse: Codable {
+    let regions: [Region]
+}
+
+struct Region: Codable {
+    let start: Coordinates
+    let end: Coordinates
+    let nutrition: MealDataPointResponse
+}
+
+struct Coordinates: Codable {
+    let X: Int
+    let Y: Int
+}
 
 struct MealDataPointResponse: Codable {
     let foodName: String // name of the food
