@@ -163,14 +163,17 @@ class API {
     private func makePages(pages: [DiaryDailyDataPoint]) -> [DiaryDailyPageForRequest] {
         var result: [DiaryDailyPageForRequest] = []
         for i in pages {
-            let page = DiaryDailyPageForRequest(date: i.date, calories: i.calories, transFat: i.transFat, saturatedFat: i.saturatedFat,
-                                                totalFat: i.totalFat, protein: i.protein, sugar: i.sugar, cholesterol: i.cholesterol,
-                                                sodium: i.sodium, calcium: i.calcium, iodine: i.iodine, iron: i.iron, magnesium: i.magnesium,
-                                                potassium: i.potassium, zinc: i.zinc, vitaminA: i.vitaminA, vitaminC: i.vitaminC,
-                                                vitaminD: i.vitaminD, vitaminE: i.vitaminE, vitaminK: i.vitaminK, vitaminB1: i.vitaminB1,
-                                                vitaminB2: i.vitaminB2, vitaminB3: i.vitaminB3, vitaminB5: i.vitaminB5, vitaminB6: i.vitaminB6,
-                                                vitaminB7: i.vitaminB7, vitaminB9: i.vitaminB9, vitaminB12: i.vitaminB12)
+            let page = DiaryDailyPageForRequest(date: i.date, breakfast: mealDataPointToRequest(meal: i.breakfast), lunch: mealDataPointToRequest(meal: i.lunch), dinner: mealDataPointToRequest(meal: i.dinner))
             result.append(page)
+        }
+        return result
+    }
+    
+    private func mealDataPointToRequest(meal: [MealDataPoint]) -> [MealDataPointResponse] {
+        var result: [MealDataPointResponse] = []
+        for i in meal {
+            let food = MealDataPointResponse(foodName: i.foodName, calories: i.calories, transFat: i.transFat, saturatedFat: i.saturatedFat, totalFat: i.totalFat, protein: i.protein, sugar: i.sugar, cholesterol: i.cholesterol, sodium: i.sodium, calcium: i.calcium, iodine: i.iodine, iron: i.iron, magnesium: i.magnesium, potassium: i.potassium, zinc: i.zinc, vitaminA: i.vitaminA, vitaminC: i.vitaminC, vitaminD: i.vitaminD, vitaminE: i.vitaminE, vitaminK: i.vitaminK, vitaminB1: i.vitaminB1, vitaminB2: i.vitaminB2, vitaminB3: i.vitaminB3, vitaminB5: i.vitaminB5, vitaminB6: i.vitaminB6, vitaminB7: i.vitaminB7, vitaminB9: i.vitaminB9, vitaminB12: i.vitaminB12)
+            result.append(food)
         }
         return result
     }
@@ -191,37 +194,9 @@ struct UserProfile: Codable{
 
 struct DiaryDailyPageForRequest: Codable {
     let date: String
-    let calories: Int
-    let transFat: Double
-    let saturatedFat: Double
-    let totalFat: Double
-    let protein: Double
-    let sugar: Double
-    let cholesterol: Double
-    let sodium: Int
-    
-    // Minerals
-    let calcium: Int
-    let iodine: Int
-    let iron: Int
-    let magnesium: Int
-    let potassium: Int
-    let zinc: Int
-    
-    // Vitamins
-    let vitaminA: Int
-    let vitaminC: Int
-    let vitaminD: Int
-    let vitaminE: Int
-    let vitaminK: Int
-    let vitaminB1: Double
-    let vitaminB2: Double
-    let vitaminB3: Int
-    let vitaminB5: Int
-    let vitaminB6: Double
-    let vitaminB7: Int
-    let vitaminB9: Int
-    let vitaminB12: Double
+    let breakfast: [MealDataPointResponse]
+    let lunch: [MealDataPointResponse]
+    let dinner: [MealDataPointResponse]
 }
 
 struct ReportRequest: Codable {

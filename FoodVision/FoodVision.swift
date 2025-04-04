@@ -6,7 +6,6 @@ struct FoodVision: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("signIn") var isSignIn = false
     @State private var isLoading = true
-    @State private var loggedIn = false
 
     var body: some Scene {
         WindowGroup {
@@ -15,12 +14,12 @@ struct FoodVision: App {
                     ProgressView()
                         .onAppear {
                             Task {
-                                loggedIn = await verifyAccountExists()
+                                isSignIn = await verifyAccountExists()
                                 isLoading = false // Update loading state after verification
                             }
                         }
                 } else {
-                    if !loggedIn {
+                    if !isSignIn {
                         LoginScreen()
                     } else {
                         NavBar()
