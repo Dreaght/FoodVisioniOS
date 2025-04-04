@@ -7,13 +7,15 @@ struct FoodSelectionView: View {
     @State private var showAlert = false
     let rectangles: [(Int, Int, Int, Int)]
     let image: UIImage
-    let HEIGHT: CGFloat = 400
-    var scaledHeight: CGFloat {
-        return image.size.height * UIScreen.main.bounds.width / image.size.width
+    
+    var imageSize: CGSize {
+        let width = UIScreen.main.bounds.width
+        let height = image.size.height * width / image.size.width
+        return CGSize(width: width, height: height)
     }
     
     var scaledCoords: [(CGFloat, CGFloat, CGFloat, CGFloat)] {
-        let ratio = scaledHeight > HEIGHT ? HEIGHT / image.size.height : UIScreen.main.bounds.width / image.size.width
+        let ratio = imageSize.height / image.size.height
         return rectangles.map { (x1, y1, x2, y2) in
             let scaledX1 = CGFloat(x1) * ratio
             let scaledY1 = CGFloat(y1) * ratio
@@ -25,64 +27,62 @@ struct FoodSelectionView: View {
     
     var body: some View {
         ZStack {
-            Color.customDarkGray
-                .ignoresSafeArea(.all)
-            VStack {
-                Spacer()
+            Color.customDarkGray.ignoresSafeArea()
+            
+            VStack(spacing: 10) {
                 Text("Please select the food you want to log:")
                     .padding()
                     .foregroundStyle(.white)
-                ZStack {
-                    backgroundImage(height: scaledHeight)
-                    ForEach(0..<rectangles.count, id: \.self) { index in
-                        rectangleButton(for: index)
-                    }
-                }
-                .frame(width: scaledHeight > HEIGHT ? image.size.width * HEIGHT / image.size.height: UIScreen.main.bounds.width, height: scaledHeight > HEIGHT ? HEIGHT : scaledHeight)
-                .border(.blue)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(10)
+                
                 Spacer()
                 
-                
-                HStack{
+                HStack {
                     backButton
                     Spacer()
                     submitButton
                 }
-                
+                .padding(.horizontal, 20)
             }
+            .zIndex(1)
+            
+            ZStack {
+                backgroundImage()
+                foodSelectionLayer()
+            }
+            .frame(width: imageSize.width, height: imageSize.height)
+            .border(.blue)
+            .zIndex(0)
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("FoodVision"),
+                message: Text("Select at least one food"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
     
     private var submitButton: some View {
         Button(action: {
-            if (selectedRectangles.count > 0) {
-                dismiss()
-            } else {
+            if selectedRectangles.isEmpty {
                 showAlert = true
+            } else {
+                dismiss()
             }
         }) {
             Text("Submit")
-                .scaledToFit()
                 .font(.system(size: 20))
                 .foregroundColor(.white)
-        }
-        .frame(width: 100, height: 100)
-        .clipShape(Circle())
-        .padding(.trailing, 20)
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("FoodVision"),
-                message: Text("Select at least one food"),
-                dismissButton: .default(Text("OK")) {
-                    showAlert = false
-                }
-            )
+                .padding()
+                .background(Color.blue)
+                .clipShape(Capsule())
         }
     }
-
+    
     private var backButton: some View {
         Button(action: {
-            // Action for chevron button
             showFoodSelection = false
             selectedRectangles = []
         }) {
@@ -90,28 +90,29 @@ struct FoodSelectionView: View {
                 .padding()
                 .font(.system(size: 20))
                 .foregroundColor(.white)
-                .cornerRadius(8)
+                .background(Color.gray.opacity(0.6))
+                .clipShape(Capsule())
         }
-        .padding(.leading, 20)
     }
-
-    private func backgroundImage(height: CGFloat) -> some View {
-        if height > HEIGHT {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: HEIGHT)
-        } else {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(width: UIScreen.main.bounds.width)
+    
+    private func backgroundImage() -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .scaledToFit()
+            .frame(width: imageSize.width, height: imageSize.height)
+    }
+    
+    private func foodSelectionLayer() -> some View {
+        ZStack {
+            ForEach(0..<rectangles.count, id: \.self) { index in
+                rectangleButton(for: index)
+            }
         }
+        .frame(width: imageSize.width, height: imageSize.height)
     }
     
     private func rectangleButton(for index: Int) -> some View {
         let rect = scaledCoords[index]
-        
         return Button(action: {
             toggleSelection(for: index)
         }) {
@@ -121,10 +122,9 @@ struct FoodSelectionView: View {
                     Rectangle()
                         .stroke(selectedRectangles.contains(index) ? Color.green : Color.red, lineWidth: 2)
                 )
-                .frame(width: CGFloat(rect.2 - rect.0), height: CGFloat(rect.3 - rect.1))
+                .frame(width: rect.2 - rect.0, height: rect.3 - rect.1)
         }
-        .position(x: CGFloat((rect.0 + rect.2) / 2),
-                  y: CGFloat((rect.1 + rect.3) / 2) )
+        .position(x: (rect.0 + rect.2) / 2, y: (rect.1 + rect.3) / 2)
     }
     
     private func toggleSelection(for index: Int) {
