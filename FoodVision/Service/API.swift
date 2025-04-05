@@ -20,6 +20,7 @@ class API {
     @AppStorage("gender") var gender = "Male"
     @AppStorage("targetweight") var targetweight = 60
     let currentUser = Auth.auth().currentUser
+
     
     func upload(_ imageData: Data) async throws -> [Region] {
         guard let currentUser = currentUser else {
@@ -27,12 +28,12 @@ class API {
         }
         
         let token = try await currentUser.getIDToken(forcingRefresh: false)
-        let boundary = "Boundary-\(UUID().uuidString)"
-        let url = URL(string: "\(URL_BASE)/upload/")!
+        let url = URL(string: "\(URL_BASE)/upload")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let boundary = "Boundary-\(UUID().uuidString)"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
         var body = Data()
