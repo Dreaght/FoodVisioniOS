@@ -100,6 +100,7 @@ struct Diary: View {
                         capturedImage = img
                         showFoodSelection = true
                         processor = BackendFoodProcessor(frame: img)
+                        isLoading = true
                     })
                 } else {
                     if let cimage = capturedImage?.fixOrientation() {
