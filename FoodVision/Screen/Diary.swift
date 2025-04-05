@@ -7,12 +7,15 @@ struct Diary: View {
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
-    @State private var processor: BackendFoodProcessor?
+    @State var processor: BackendFoodProcessor?
     @State var diaryPage: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: dateToString(date: Date()))
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
     @State private var selectedDate = Date()
     @Environment(\.modelContext) var modelContext
+    
+    @State private var isLoading = true
+    @State private var regions: [(Int, Int, Int, Int)] = []  // <-- Declare regions as @State variable
 
     // Define the date range
     private var startDate: Date {
@@ -25,13 +28,13 @@ struct Diary: View {
         // Today's date
         return Date()
     }
+    
     private var mealsCount: [Int] { [
         diaryPage.breakfast.count,
         diaryPage.lunch.count,
         diaryPage.dinner.count
-    ]
-    }
-    
+    ] }
+
     var body: some View {
         VStack {
             HStack {
@@ -86,7 +89,8 @@ struct Diary: View {
             showCamera = false
             selectedRegionIndex.removeAll()
             processor = nil
-        }) {
+        })
+ {
             ZStack {
                 Color.customDarkGray
                     .ignoresSafeArea(edges: .all)
@@ -99,13 +103,13 @@ struct Diary: View {
                     })
                 } else {
                     if let cimage = capturedImage?.fixOrientation() {
-                        var isLoading = true
-                        var regions: [(Int, Int, Int, Int)] = []
+                        
                         if isLoading {
                             ProgressView("Processing Image...")
                                 .onAppear {
                                     Task {
-                                        regions = try await processor!.detectFoods()
+                                        regions = try await processor!.detectFoods()  // <-- Update regions here
+                                        print(regions)
                                         isLoading = false
                                     }
                                 }
@@ -248,7 +252,6 @@ struct Diary: View {
         let d = dateFormatter.date(from: date)
         return d
     }
-    
 }
 
 #Preview {

@@ -4,7 +4,7 @@ import UIKit
 // BackendFoodProcessor class that detects food regions in an image
 class BackendFoodProcessor {
     private let image: UIImage
-    private var foodRegions: [(Int, Int, Int, Int)] = []
+    var foodRegions: [(Int, Int, Int, Int)] = []
     private var foodInfos: [MealDataPoint] = []
     init(frame: UIImage) {
         self.image = frame
