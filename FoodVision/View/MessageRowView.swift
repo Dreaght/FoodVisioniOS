@@ -7,45 +7,46 @@ struct MessageRowView: View {
     @Environment(\.colorScheme) private var colorScheme
     let message: MessageRow
     let retryCallBack: (MessageRow) -> Void
+    
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 8) {  // Reduced spacing for smaller height
             messageRow(text: message.sendText, image: message.sendImage, bgColor: colorScheme == .light ? .white : Color(red: 52/255, green: 53/255, blue: 65/255, opacity: 0.5))
             
             let temp: String? = message.responseText
             if let text = temp {
-                Divider()
                 messageRow(text: text, bgColor: colorScheme == .light ? .gray.opacity(0.1) : Color(red: 52/255, green: 53/255, blue: 65/255, opacity: 1), responseError: message.responseError, showDotLoading: message.isInteractingWithChatGPT, image2: message.responseImage)
-                Divider()
+                    .padding(.bottom, 8)
             }
         }
     }
     
     func messageRow(text: String, image: URL? = nil, bgColor: Color, responseError: String? = nil, showDotLoading: Bool = false, image2: String? = nil) -> some View {
-        HStack(alignment: .top, spacing: 24) {
+        HStack(alignment: .center, spacing: 12) {  // Reduced spacing for compact look
             if (image != nil) {
                 WebImage(url: image)
                 .resizable()
-                .frame(width: 50, height: 50)
-                .cornerRadius(75)
-                .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                .frame(width: 40, height: 40)  // Smaller image size
+                .clipShape(Circle())  // Ensure it's round
+                .overlay(Circle().stroke(Color(.label), lineWidth: 1))
                 .shadow(radius: 5)
             } else if (image2 != nil) {
                 let img: String = image2 ?? "person.crop.circle"
                 Image(img)
                     .resizable()
-                    .frame(width: 50, height: 50)
-                    .cornerRadius(75)
-                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .frame(width: 40, height: 40)  // Smaller image size
+                    .clipShape(Circle())  // Ensure it's round
+                    .overlay(Circle().stroke(Color(.label), lineWidth: 1))
                     .shadow(radius: 5)
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
-                    .frame(width: 50, height: 50)
-                    .cornerRadius(75)
-                    .overlay(RoundedRectangle(cornerRadius: 75).stroke(Color(.label), lineWidth: 1))
+                    .frame(width: 40, height: 40)  // Smaller image size
+                    .clipShape(Circle())  // Ensure it's round
+                    .overlay(Circle().stroke(Color(.label), lineWidth: 1))
                     .shadow(radius: 5)
             }
-            VStack(alignment: .leading) {
+            
+            VStack(alignment: .leading, spacing: 4) {  // Reduced spacing for compactness
                 if (!text.isEmpty) {
                     Text(text)
                         .multilineTextAlignment(.leading)
@@ -60,7 +61,7 @@ struct MessageRowView: View {
                     Button("Regenerate response") {
                         retryCallBack(message)
                     }
-                    .padding(.top)
+                    .padding(.top, 4)
                 }
                 
                 if showDotLoading {
@@ -69,10 +70,14 @@ struct MessageRowView: View {
                 }
                 
             }
+            .padding(.vertical, 10)  // Smaller vertical padding
+            .padding(.horizontal, 20)
+            .frame(minHeight: 40)  // Set minimum height for the message text area
+            .background(bgColor)
+            .cornerRadius(16)  // Rounded background
         }
-        .padding(16)
+        .padding(.horizontal, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(bgColor)
     }
     
 }
