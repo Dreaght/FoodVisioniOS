@@ -9,6 +9,7 @@ struct FoodVision: App {
     @State private var isAccountExist = false
     @AppStorage("prevUid") var prevUid = "no uid"
     @Environment(\.modelContext) var modelContext
+    @State private var isDoneWelcome = false
     var body: some Scene {
         WindowGroup {
             Group {
@@ -26,15 +27,26 @@ struct FoodVision: App {
                             if getUID() == prevUid {
                                 NavBar()
                             } else{
-                                WelcomeView()
-                                    .modelContainer(for: DiaryDailyDataPoint.self)
+                                if !isDoneWelcome {
+                                    WelcomeView(isDoneWelcome: $isDoneWelcome)
+                                        .modelContainer(for: DiaryDailyDataPoint.self)
+                                } else {
+                                    NavBar()
+                                }
                             }
                         } else {
-                            WelcomeView()
-                                .modelContainer(for: DiaryDailyDataPoint.self)
+                            if !isDoneWelcome {
+                                WelcomeView(isDoneWelcome: $isDoneWelcome)
+                                    .modelContainer(for: DiaryDailyDataPoint.self)
+                            } else {
+                                NavBar()
+                            }
                         }
                     } else {
                         LoginScreen()
+                            .onAppear {
+                                isDoneWelcome = false
+                            }
                     }
                 }
             }

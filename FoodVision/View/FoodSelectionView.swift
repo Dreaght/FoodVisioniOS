@@ -52,7 +52,6 @@ struct FoodSelectionView: View {
                 foodSelectionLayer()
             }
             .frame(width: imageSize.width, height: imageSize.height)
-            .border(.blue)
             .zIndex(0)
         }
         .alert(isPresented: $showAlert) {

@@ -84,9 +84,9 @@ struct Settings: View {
             .init(title: Text("Settings"), message: Text("Are you sure you want to sign out?"), buttons: [
                 .destructive(Text("Sign out"), action: {
                     do {
+                        UserDefaults.standard.set(Auth.auth().currentUser?.uid ?? "no User id", forKey: "prevUid")
                         try Auth.auth().signOut()
                         UserDefaults.standard.set(false, forKey: "signIn")
-                        UserDefaults.standard.set(Auth.auth().currentUser?.uid ?? "no User id", forKey: "prevUid")
                     } catch let signOutError as NSError {
                         print("Error signing out: %@", signOutError.localizedDescription)
                     }
