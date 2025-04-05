@@ -3,6 +3,15 @@ import SwiftUI
 import UIKit
 import FirebaseAuth
 
+
+extension Data {
+    mutating func append(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            self.append(data)
+        }
+    }
+}
+
 class API {
     let URL_BASE = "http://45.93.136.230:8080"
     @AppStorage("height") var height = 170
@@ -12,49 +21,53 @@ class API {
     @AppStorage("targetweight") var targetweight = 60
     let currentUser = Auth.auth().currentUser
     
-    
-    // Upload a single image as raw bytes
-    func upload(_ image: Data) async throws -> [Region] {
+    func upload(_ imageData: Data) async throws -> [Region] {
         guard let currentUser = currentUser else {
-            print("No user is signed in.")
             throw ParsingError.noUser
         }
-        let token = try await currentUser.getIDToken(forcingRefresh: true)
+        
+        let token = try await currentUser.getIDToken(forcingRefresh: false)
+        let boundary = "Boundary-\(UUID().uuidString)"
         let url = URL(string: "\(URL_BASE)/upload/")!
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-        request.httpBody = image
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"food.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        // Debug logs
+        print("[Upload] URL: \(url)")
+        print("[Upload] Token: \(token.prefix(10))...")
+        print("[Upload] Boundary: \(boundary)")
+        print("[Upload] Image size: \(imageData.count) bytes")
+        print("[Upload] Headers: \(request.allHTTPHeaderFields ?? [:])")
+        
         let (data, response) = try await URLSession.shared.data(for: request)
-        print(data, response)
+        
+        // Add response debug
+        if let httpResponse = response as? HTTPURLResponse {
+            print("[Upload] Status Code: \(httpResponse.statusCode)")
+        }
+        print("[Upload] Raw Response Body: \(String(data: data, encoding: .utf8) ?? "nil")")
+        
         try validate(response)
         
-        // Convert response data to string
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            print("failed parsing from data to string")
-            throw ParsingError.invalidData
-        }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        // Convert jsonString back to Data
-        guard let jsonData = jsonString.data(using: .utf8) else {
-            print("failed convert jsonString back to Data")
-            throw ParsingError.invalidData
-        }
-
-        // Decode JSON data
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let decodedData = try decoder.decode(UploadResponse.self, from: jsonData)
-            return decodedData.regions
-        } catch {
-            throw ParsingError.invalidData
-        }
+        return try decoder.decode(UploadResponse.self, from: data).regions
     }
-    
-    
+
     func chat(_ pages: [DiaryDailyDataPoint]) async throws -> String {
         print("Starting chat")
         
@@ -66,7 +79,7 @@ class API {
         // Prepare the payload (like curl would do)
         let payload = try prepareChatPayload(pages: pages)
         print(payload)
-        let token = try await currentUser.getIDToken(forcingRefresh: true)
+        let token = try await currentUser.getIDToken(forcingRefresh: false)
         let url = URL(string: "\(URL_BASE)/chat")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -126,7 +139,7 @@ class API {
         // Prepare the payload as a string (similar to the `curl --data "your_payload"`)
         let payload = try prepareReportPayload(pages: pages)
 
-        let token = try await currentUser.getIDToken(forcingRefresh: true)
+        let token = try await currentUser.getIDToken(forcingRefresh: false)
         let url = URL(string: "\(URL_BASE)/report")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
