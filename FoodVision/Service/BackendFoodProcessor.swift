@@ -16,11 +16,13 @@ class BackendFoodProcessor {
         
         do {
             let regions: [Region] = try await api.upload(image.pngData()!)
+            print("Successfully detected food regions!")
+            print(regions)
             for region in regions {
                 let coords = (region.start.X, region.start.Y, region.end.X, region.end.Y)
                 foodRegions.append(coords)
                 let mealInfo = region.nutrition
-                let meal = MealDataPoint(image: image, foodName: mealInfo.foodName, calories: mealInfo.calories, transFat: mealInfo.transFat,
+                let meal = MealDataPoint(image: image, foodName: mealInfo.name, calories: mealInfo.calories, transFat: mealInfo.transFat,
                                          saturatedFat: mealInfo.saturatedFat, totalFat: mealInfo.totalFat, protein: mealInfo.protein,
                                          sugar: mealInfo.sugar, cholesterol: mealInfo.cholesterol, sodium: mealInfo.sodium,
                                          calcium: mealInfo.calcium, iodine: mealInfo.iodine, iron: mealInfo.iron, magnesium: mealInfo.magnesium,
@@ -38,6 +40,9 @@ class BackendFoodProcessor {
             print("Failed to get food infos")
             throw ParsingError.invalidData
         }
+        
+        print("returning foodRegions: ")
+        print(foodRegions)
 
         return foodRegions
     }
