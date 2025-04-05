@@ -47,11 +47,23 @@ struct ChatBot: View {
     var chatListView: some View {
         ScrollViewReader { proxy in
             ZStack {
-                
-
                 VStack(spacing: 0) {
                     ScrollView {
-                        LazyVStack(spacing: 0) {
+                        LazyVStack(spacing: 12) {
+                            // Welcome Label
+                            if vm.messages.isEmpty {
+                                Text("💡 Meet your AI-powered diet assistant.\nYour messages aren't saved. Ask anything about improving your nutrition based on your daily intake.")
+                                    .font(.callout)
+                                    .foregroundStyle(.primary)
+                                    .multilineTextAlignment(.center)
+                                    .padding()
+                                    .background(Color.primary.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                    .padding(.horizontal)
+                                    .padding(.top)
+                            }
+
+                            // Chat messages
                             ForEach(vm.messages) { message in
                                 MessageRowView(message: message) { message in
                                     Task { @MainActor in
@@ -69,12 +81,12 @@ struct ChatBot: View {
                     scrollToBottom(proxy: proxy)
                 }
                 .onTapGesture {
-                                        isTextFieldFocused = false
-                                    }
+                    isTextFieldFocused = false
+                }
             }
-            
         }
     }
+
 
     func bottomView(img: URL?, proxy: ScrollViewProxy) -> some View {
         HStack(alignment: .bottom, spacing: 8) {
