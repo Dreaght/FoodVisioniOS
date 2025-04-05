@@ -22,9 +22,12 @@ struct ReportScreen: View {
         }()
         
         VStack {
+            
             Text("Select the start and end date to generate report for:")
                 .font(.subheadline)
                 .multilineTextAlignment(.leading)
+        
+            
             Text("Choose up to at most a week")
                 .multilineTextAlignment(.leading)
                 .padding()
@@ -42,6 +45,9 @@ struct ReportScreen: View {
                        in: startDate...maxEndDate,
                        displayedComponents: [.date])
             .padding()
+            
+            Spacer()
+            
             Button(action: {
                 isGeneratingReport = true
                 Task {
@@ -57,7 +63,6 @@ struct ReportScreen: View {
                     .cornerRadius(8)
             }
             .padding()
-            Spacer()
         }
         .padding()
         .navigationTitle("Report Generation")
