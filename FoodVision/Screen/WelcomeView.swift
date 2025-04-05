@@ -138,7 +138,12 @@ struct WelcomeView: View {
     }
     
     private func eraseDB() {
-        modelContext.container.deleteAllData()
+        do {
+            try modelContext.delete(model: DiaryDailyDataPoint.self)
+            try modelContext.save()
+        } catch {
+            print("Failed to clear all DiaryDailyDataPoint data.")
+        }
     }
     
     func doShowMainApp() {
