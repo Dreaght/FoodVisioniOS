@@ -43,24 +43,13 @@ struct Settings: View {
                         selection: $bday,
                         displayedComponents: [.date]
                     )
+                    .padding(.vertical, 1)
                     .onChange(of: bday, initial: false) {
                         birthdateChanged(bday)
                     }
-                    .padding(.trailing, 55)
-                    .padding(.vertical, 10)
-                    HStack {
-                        Text("Gender:")
-                        Picker("Your Gender", selection: $gender) {
-                                    Text("Male").tag("Male")
-                                    Text("Female").tag("Female")
-                                }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .onChange(of: gender, initial: false) {
-                            genderChanged(gender)
-                        }
-                        .padding()
-                    }
                 }
+                .listRowBackground(Color.primary.opacity(0.05)) // 💡 Apply background with opacity
+
                 
                 Section("Log Out") {
                     HStack {
@@ -77,6 +66,7 @@ struct Settings: View {
                         }
                     }
                 }
+                .listRowBackground(Color.primary.opacity(0.1)) // 💡 Apply background with opacity
             }
         }
         .navigationTitle("Settings") // This adds a title in the NavigationStack

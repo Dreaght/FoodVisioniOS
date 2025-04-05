@@ -11,41 +11,37 @@ struct ScrollValuePicker: View {
     var body: some View {
         HStack {
             Text("\(textf)")
+            Spacer()
+            
             if !showPicker {
                 Button(action: {
-                    showPicker.toggle() // Show the picker on button click
+                    showPicker.toggle()
                 }) {
                     Text("\(num) \(numType)")
-                        .padding()
+                        .padding(8)
                         .background(Color.customLightGray)
                         .foregroundStyle(Color.blackInLight)
                         .cornerRadius(10)
-                        .onChange(of: num) {
-                            num = 100
-                        }
                 }
-                .padding()
-                
             } else {
-                HStack{
+                HStack {
                     Picker("Select Number", selection: $num) {
                         ForEach(minNum...maxNum, id: \.self) { weight in
                             Text("\(weight) \(numType)").tag(weight)
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
-                    .frame(height: 100)
+                    .frame(height: 70)
                     .background(Color.customLightGray)
-                    .transition(.move(edge: .top).combined(with: .opacity)) // Transition for picker appearance
-                    .onChange(of: num, initial: false) {
-                        num = num
-                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+
                     Button("Confirm") {
                         showPicker.toggle()
                     }
                 }
             }
         }
+
     }
 }
 
