@@ -19,42 +19,51 @@ struct CameraView: View {
 
             VStack {
                 Spacer()
-                HStack {
-                    PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
-                        if let recentPhoto = recentPhoto {
-                            Image(uiImage: recentPhoto)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .padding(.bottom, 40)
-                        } else {
-                            Image(systemName: "photo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .padding(.bottom, 40)
-                                .foregroundStyle(.white)
+                
+                ZStack {
+                    HStack {
+                                        
+                        Spacer()
+                        Button(action: {
+                            cameraModel.capturePhoto()
+                        }) {
+                            Circle()
+                                .fill(Color.primary.opacity(0))
+                                .frame(width: 70, height: 70)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: 3)
+                                )
                         }
+                        .padding(.bottom, 40)
+                        Spacer()
                     }
-                    .padding(.horizontal, 20)
-                    Spacer()
-                    Button(action: {
-                        cameraModel.capturePhoto()
-                    }) {
-                        Circle()
-                            .fill(Color.primary.opacity(0))
-                            .frame(width: 70, height: 70)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.white, lineWidth: 3)
-                            )
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    
+                    HStack {
+                        PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
+                            if let recentPhoto = recentPhoto {
+                                Image(uiImage: recentPhoto)
+                                    .resizable()
+                                    .scaledToFill() // Ensure the image fills the frame
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle()) // Make it fully rounded
+                                    .padding(.bottom, 40)
+                            } else {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .padding(.bottom, 40)
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .padding(.leading, 40)
+                        Spacer()
                     }
-                    .padding(.bottom, 40)
-                    Spacer()
-                    Spacer()
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
+                
             }
         }
         .onAppear {
