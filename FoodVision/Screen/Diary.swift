@@ -8,7 +8,7 @@ struct Diary: View {
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
     @State private var processor: BackendFoodProcessor?
-    @State var diaryPage: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: dateToString(date: Date()))
+    @State var diaryPage: DiaryDailyDataPoint
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
     @State private var selectedDate = Date()
@@ -261,6 +261,6 @@ struct Diary: View {
 #Preview {
     @Previewable @State var diaryEntry = DiaryDailyDataPoint.create(date: "2025-03-30")
     
-    Diary()
+    Diary(diaryPage: diaryEntry)
         .modelContainer(for: DiaryDailyDataPoint.self, inMemory: true)
 }

@@ -22,10 +22,11 @@ struct NavBar: View {
         updateAppearance(for: UITraitCollection.current.userInterfaceStyle)
     }
 
+    let today: DiaryDailyDataPoint = DiaryDailyDataPoint.create(date: Diary.dateToString(date: Date()))
     var body: some View {
         TabView {
             NavigationStack {
-                Diary()
+                Diary(diaryPage: today)
                     .modelContainer(for: DiaryDailyDataPoint.self)
             }
             .tabItem {

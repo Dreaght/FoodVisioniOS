@@ -86,7 +86,7 @@ class API {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload.data(using: .utf8)
-
+        print("[chat] Token: \(token.prefix(10))...")
         // Send the request
         let (data, response) = try await URLSession.shared.data(for: request)
         // Validate the response
