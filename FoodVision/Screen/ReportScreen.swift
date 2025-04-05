@@ -1,4 +1,5 @@
 import SwiftUI
+import Photos
 import _SwiftData_SwiftUI
 
 struct ReportScreen: View {
@@ -9,6 +10,7 @@ struct ReportScreen: View {
     @State private var isReportGenerated = false
     @State private var reportImage: UIImage? = nil
     @State private var isNoDaysSelected = false
+    @State private var isReportSaved = false
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -84,9 +86,7 @@ struct ReportScreen: View {
                     .scaledToFit()
                     .padding()
                 Button(action: {
-                    Task {
-                        
-                    }
+                    saveImageToPhotos(image: reportImage)
                 }) {
                     Text("Download")
                         .font(.headline)
@@ -97,6 +97,15 @@ struct ReportScreen: View {
                         .cornerRadius(8)
                 }
                 .padding()
+                .alert(isPresented: $isReportSaved) {
+                    Alert(
+                        title: Text("FoodVision"),
+                        message: Text("Report has been saved to your photos library."),
+                        dismissButton: .default(Text("Confirm")) {
+                            isReportSaved = false
+                        }
+                    )
+                }
             } else {
                 Image("testBurger")
             }
@@ -127,6 +136,19 @@ struct ReportScreen: View {
         }
         isReportGenerated = true
         isGeneratingReport = false
+    }
+    
+    private func saveImageToPhotos(image: UIImage) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        }) { success, error in
+            if success {
+                print("Image saved to photos.")
+                isReportSaved = true
+            } else if let error = error {
+                print("Error saving image: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
