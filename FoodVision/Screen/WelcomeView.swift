@@ -3,8 +3,8 @@ import SwiftUI
 struct WelcomeView: View {
     @Binding var isDoneWelcome: Bool
     @Environment(\.colorScheme) var colorScheme
-    @State private var subtitle: String = "What's your gender?"
-    @State private var selectedGender: String? = nil
+    @State private var subtitle: String = "What's your sex?"
+    @State private var selectedSex: String? = nil
     @State private var birthDate: Date = Date()
     @State private var height: CGFloat = 178
     @State private var weight: CGFloat = 70
@@ -62,13 +62,18 @@ struct WelcomeView: View {
                 VStack {
                     if !showBodyPropertionsView {
                         if (disableGenderSelection == false) {
-                            GenderSelectionView(selectedGender: $selectedGender)
+                            SexSelectionView(
+                                selectedGender: $selectedSex,
+                                subtitle: $subtitle,
+                                showBodyPropertionsView: $showBodyPropertionsView,
+                                disableGenderSelection: $disableGenderSelection,
+                                mainUIOpacity: $mainUIOpacity)
                                 .disabled(disableGenderSelection)
                                 .opacity(disableGenderSelection == true ? 0.5 : 1)
                         } else {
                             HStack {
                                 Spacer()
-                                BodyPropertiesPreview(selectedGender: $selectedGender,
+                                BodyPropertiesPreview(selectedGender: $selectedSex,
                                     height: $height, weight: $weight)
                                 Spacer()
                                 Spacer()
@@ -86,7 +91,7 @@ struct WelcomeView: View {
                             }
                         } else {
                             BodyPropertiesView(
-                                selectedGender: $selectedGender,
+                                selectedGender: $selectedSex,
                                 height: $height, weight: $weight
                             )
                             .opacity(mainUIOpacity)  // Ensure the view fades in
@@ -102,16 +107,16 @@ struct WelcomeView: View {
 
                     Spacer()
 
-                    // Continue button with conditional opacity based on gender selection
+                    // Continue button with conditional opacity based on sex selection
                     Button(action: {
                         if (showBirthDatePicker == true) {
                             doShowMainApp()
-                        } else if selectedGender != nil && !showBodyPropertionsView {
-                                subtitle = "Choose your height and weight"
+                        } else if selectedSex != nil && !showBodyPropertionsView {
+                                subtitle = "Select your height and weight"
                                 showBodyPropertionsView = true
                                 disableGenderSelection = true
                                 mainUIOpacity = 0
-                        } else if selectedGender != nil && showBodyPropertionsView
+                        } else if selectedSex != nil && showBodyPropertionsView
                                         && showBirthDatePicker == false {
                             showBodyPropertionsView = false
                             showBirthDatePicker = true
@@ -130,8 +135,8 @@ struct WelcomeView: View {
                     .background(colorScheme == .dark ? Color.white : Color.black)
                     .cornerRadius(50)
                     .compositingGroup()
-                    .opacity(selectedGender == nil ? 0.5 : 1) // Disable the button if no gender is selected
-                        .disabled(selectedGender == nil) // Disable the button completely if no gender is selected
+                    .opacity(selectedSex == nil ? 0 : 1) // Disable the button if no gender is selected
+                        .disabled(selectedSex == nil) // Disable the button completely if no gender is selected
                 }
                 .opacity(mainUIOpacity) // Apply fade-in effect for the rest of the UI
         }
@@ -158,7 +163,7 @@ struct WelcomeView: View {
             UserDefaults.standard.set(height, forKey: "height")
             UserDefaults.standard.set(weight, forKey: "currweight")
             UserDefaults.standard.set(birthDate, forKey: "birthdate")
-            UserDefaults.standard.set(String(selectedGender ?? "Male"), forKey: "gender")
+            UserDefaults.standard.set(String(selectedSex ?? "Male"), forKey: "gender")
         }
         isDoneWelcome = true
     }
