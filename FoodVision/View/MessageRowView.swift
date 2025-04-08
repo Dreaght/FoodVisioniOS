@@ -87,14 +87,14 @@ struct MessageRowView: View {
         isInteractingWithChatGPT: true,
         sendImage: Auth.auth().currentUser?.photoURL,
         sendText: "Question from user?",
-        responseImage: "botpfp",
+        responseImage: "AppIcon",
         responseText: "Response from bot"
     )
     let message2 = MessageRow(
         isInteractingWithChatGPT: false,
         sendImage: Auth.auth().currentUser?.photoURL,
         sendText: "Question from user?",
-        responseImage: "botpfp",
+        responseImage: "AppIcon",
         responseText: "",
         responseError: "Chatgpt is down"
     )

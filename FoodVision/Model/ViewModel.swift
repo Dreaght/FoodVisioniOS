@@ -37,7 +37,7 @@ class ViewModel: ObservableObject {
             isInteractingWithChatGPT: true,
             sendImage: Auth.auth().currentUser?.photoURL,
             sendText: text,
-            responseImage: "botpfp",
+            responseImage: "AppIcon",
             responseText: gptResponse,
             responseError: nil
         )

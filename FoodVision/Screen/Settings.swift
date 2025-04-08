@@ -41,6 +41,7 @@ struct Settings: View {
                     DatePicker(
                         "Birthdate:",
                         selection: $bday,
+                        in: ...Date(),
                         displayedComponents: [.date]
                     )
                     .padding(.vertical, 1)
