@@ -48,7 +48,7 @@ class DummyFoodProcessor {
     private func createRandomFoods() -> MealDataPoint {
         let meal = MealDataPoint(
             image: image,
-            foodName: "Random Food",
+            foodName: "Food",
             calories: Int.random(in: 50...600), // Random calories between 50 and 600
             transFat: Double.random(in: 0...5), // Random trans fat between 0 and 5 grams
             saturatedFat: Double.random(in: 0...20), // Random saturated fat between 0 and 20 grams

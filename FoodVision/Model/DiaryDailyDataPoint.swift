@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-class DiaryDailyDataPoint: Identifiable {
+class DiaryDailyDataPoint: Identifiable, ObservableObject {
     static private var existingDates: [String: DiaryDailyDataPoint] = [:] // Dictionary to track existing instances
     
     private init(date: String) {
@@ -63,6 +63,7 @@ class DiaryDailyDataPoint: Identifiable {
     var vitaminB12: Double = 0      // in micrograms mcg
     
     func calculateDailyNutrition() {
+        setAllToZero()
         for i in breakfast {
             addToDaily(meal: i)
         }

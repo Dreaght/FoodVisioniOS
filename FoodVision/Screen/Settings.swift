@@ -9,7 +9,7 @@ struct Settings: View {
     @AppStorage("height") var height = 170
     @AppStorage("currweight") var currweight = 70
     @AppStorage("birthdate") var bday = Date()
-    @AppStorage("gender") var gender = "Male"
+//    @AppStorage("sex") var gender = "Male"
     @AppStorage("targetweight") var targetweight = 60
 
     var body: some View {
@@ -98,9 +98,9 @@ struct Settings: View {
     private func birthdateChanged(_ newbday: Date) {
         UserDefaults.standard.set(newbday, forKey: "birthdate")
     }
-    private func genderChanged(_ newGender: String) {
-        UserDefaults.standard.set(newGender, forKey: "gender")
-    }
+//    private func genderChanged(_ newGender: String) {
+//        UserDefaults.standard.set(newGender, forKey: "gender")
+//    }
 }
 
 #Preview {

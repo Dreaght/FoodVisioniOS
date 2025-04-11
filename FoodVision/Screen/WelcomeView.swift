@@ -163,7 +163,7 @@ struct WelcomeView: View {
             UserDefaults.standard.set(height, forKey: "height")
             UserDefaults.standard.set(weight, forKey: "currweight")
             UserDefaults.standard.set(birthDate, forKey: "birthdate")
-            UserDefaults.standard.set(String(selectedSex ?? "Male"), forKey: "gender")
+            UserDefaults.standard.set(String(selectedSex ?? "Male"), forKey: "sex")
         }
         isDoneWelcome = true
     }

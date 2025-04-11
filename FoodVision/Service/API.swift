@@ -17,7 +17,7 @@ class API {
     @AppStorage("height") var height = 170
     @AppStorage("currweight") var currweight = 70
     @AppStorage("birthdate") var bday = Date()
-    @AppStorage("gender") var gender = "Male"
+    @AppStorage("sex") var gender = "Male"
     @AppStorage("targetweight") var targetweight = 60
     let currentUser = Auth.auth().currentUser
 

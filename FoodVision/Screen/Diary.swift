@@ -7,7 +7,7 @@ struct Diary: View {
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
-    @State private var processor: BackendFoodProcessor?
+    @State private var processor: DummyFoodProcessor?
     @State var diaryPage: DiaryDailyDataPoint
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
@@ -49,12 +49,15 @@ struct Diary: View {
                 Spacer()
             }
             
+            DailyNutritionView(page: diaryPage)
+            Spacer()
             MealView(showCamera: $showCamera, foodItems: $diaryPage)  {
                 sm in
                 selectedMeal = sm
             }
             .onChange(of: mealsCount, initial: false) { old, new  in
                 if mealsCount.allSatisfy({ $0 == 0 }) {
+                    diaryPage.setAllToZero()
                     modelContext.delete(diaryPage)
                     guard let _ = try? modelContext.save() else {
                         print("Should not happen!!! save failed D:")
@@ -99,7 +102,7 @@ struct Diary: View {
                         let img = image.fixOrientation()
                         capturedImage = img
                         showFoodSelection = true
-                        processor = BackendFoodProcessor(frame: img)
+                        processor = DummyFoodProcessor(frame: img)
                         isLoading = true
                     })
                 } else {
