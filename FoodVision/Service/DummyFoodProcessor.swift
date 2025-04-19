@@ -82,20 +82,25 @@ class DummyFoodProcessor {
     
     // Create random region within the image frame
     private func createRandomRegion(frameWidth: Int, frameHeight: Int) -> (Int, Int, Int, Int) {
-        let maxX1 = Int(frameWidth * 4 / 5)
-        let maxY1 = Int(frameHeight * 4 / 5)
+        let aspectRatios = [(3, 4)]
+        let (aspectW, aspectH) = aspectRatios.randomElement()!
         
-        let x1 = Int.random(in: 0..<maxX1)
-        let y1 = Int.random(in: 0..<maxY1)
+        let baseWidth = Int(Double(frameWidth) * 0.4)
+        let baseHeight = baseWidth * aspectH / aspectW
         
-        let width = Int.random(in: 0..<Int(frameWidth/5))
-        let height = Int.random(in: 0..<Int(frameHeight/5))
+        // Make sure the region fits inside the frame
+        let maxX1 = frameWidth - baseWidth
+        let maxY1 = frameHeight - baseHeight
         
-        let x2 = min(x1 + width, frameWidth) // Bottom-right x-coordinate
-        let y2 = min(y1 + height, frameHeight) // Bottom-right y-coordinate
+        let x1 = Int.random(in: 0...maxX1)
+        let y1 = Int.random(in: 0...maxY1)
         
-        return (x1, y1, x2, y2) // Return the tuple with x1, y1, x2, y2
+        let x2 = x1 + baseWidth
+        let y2 = y1 + baseHeight
+        
+        return (x1, y1, x2, y2)
     }
+
     
     // Crop the image based on the provided CGRect
     private func cropImage(rect: CGRect) -> UIImage? {
