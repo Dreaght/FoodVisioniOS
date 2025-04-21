@@ -53,8 +53,12 @@ class API {
         print("[Upload] Image size: \(imageData.count) bytes")
         print("[Upload] Headers: \(request.allHTTPHeaderFields ?? [:])")
         
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 120
+        config.timeoutIntervalForResource = 300
+        let session = URLSession(configuration: config)
+        let (data, response) = try await session.data(for: request)
+
         // Add response debug
         if let httpResponse = response as? HTTPURLResponse {
             print("[Upload] Status Code: \(httpResponse.statusCode)")
@@ -168,7 +172,7 @@ class API {
     private func prepareReportPayload(pages: [DiaryDailyDataPoint]) throws -> String {
         struct Meal: Codable {
             let foodName: String
-            let calories: Int
+            let calories: Double
         }
 
         struct ReportPage: Codable {
@@ -286,7 +290,7 @@ class API {
     private func mealDataPointToRequest(meal: [MealDataPoint]) -> [MealDataPointResponse] {
         var result: [MealDataPointResponse] = []
         for i in meal {
-            let food = MealDataPointResponse(name: i.foodName, calories: i.calories, transFat: i.transFat, saturatedFat: i.saturatedFat, totalFat: i.totalFat, protein: i.protein, sugar: i.sugar, cholesterol: i.cholesterol, sodium: i.sodium, calcium: i.calcium, iodine: i.iodine, iron: i.iron, magnesium: i.magnesium, potassium: i.potassium, zinc: i.zinc, vitaminA: i.vitaminA, vitaminC: i.vitaminC, vitaminD: i.vitaminD, vitaminE: i.vitaminE, vitaminK: i.vitaminK, vitaminB1: i.vitaminB1, vitaminB2: i.vitaminB2, vitaminB3: i.vitaminB3, vitaminB5: i.vitaminB5, vitaminB6: i.vitaminB6, vitaminB7: i.vitaminB7, vitaminB9: i.vitaminB9, vitaminB12: i.vitaminB12)
+            let food = MealDataPointResponse(name: i.foodName, calories: Double(i.calories), transFat: i.transFat, saturatedFat: i.saturatedFat, totalFat: i.totalFat, protein: i.protein, sugar: i.sugar, cholesterol: i.cholesterol, sodium: Double(i.sodium), calcium: Double(i.calcium), iodine: Double(i.iodine), iron: Double(i.iron), magnesium: Double(i.magnesium), potassium: Double(i.potassium), zinc: Double(i.zinc), vitaminA: Double(i.vitaminA), vitaminC: Double(i.vitaminC), vitaminD: Double(i.vitaminD), vitaminE: Double(i.vitaminE), vitaminK: Double(i.vitaminK), vitaminB1: i.vitaminB1, vitaminB2: i.vitaminB2, vitaminB3: Double(i.vitaminB3), vitaminB5: Double(i.vitaminB5), vitaminB6: i.vitaminB6, vitaminB7: Double(i.vitaminB7), vitaminB9: Double(i.vitaminB9), vitaminB12: i.vitaminB12)
             result.append(food)
         }
         return result
@@ -329,43 +333,43 @@ struct Region: Codable {
 }
 
 struct Coordinates: Codable {
-    let X: Int
-    let Y: Int
+    let X: Double
+    let Y: Double
 }
 
 struct MealDataPointResponse: Codable {
     let name: String // name of the food
     
     // Nutritional information
-    let calories: Int
+    let calories: Double
     let transFat: Double
     let saturatedFat: Double
     let totalFat: Double
     let protein: Double
     let sugar: Double
     let cholesterol: Double
-    let sodium: Int
+    let sodium: Double
     
     // Minerals
-    let calcium: Int
-    let iodine: Int
-    let iron: Int
-    let magnesium: Int
-    let potassium: Int
-    let zinc: Int
+    let calcium: Double
+    let iodine: Double
+    let iron: Double
+    let magnesium: Double
+    let potassium: Double
+    let zinc: Double
     
     // Vitamins
-    let vitaminA: Int
-    let vitaminC: Int
-    let vitaminD: Int
-    let vitaminE: Int
-    let vitaminK: Int
+    let vitaminA: Double
+    let vitaminC: Double
+    let vitaminD: Double
+    let vitaminE: Double
+    let vitaminK: Double
     let vitaminB1: Double
     let vitaminB2: Double
-    let vitaminB3: Int
-    let vitaminB5: Int
+    let vitaminB3: Double
+    let vitaminB5: Double
     let vitaminB6: Double
-    let vitaminB7: Int
-    let vitaminB9: Int
+    let vitaminB7: Double
+    let vitaminB9: Double
     let vitaminB12: Double
 }

@@ -6,36 +6,36 @@ struct MealDataPoint: Codable {
     let foodName: String // name of the food
     
     // Nutritional information
-    let calories: Int
+    let calories: Double
     let transFat: Double
     let saturatedFat: Double
     let totalFat: Double
     let protein: Double
     let sugar: Double
     let cholesterol: Double
-    let sodium: Int
+    let sodium: Double
     
     // Minerals
-    let calcium: Int
-    let iodine: Int
-    let iron: Int
-    let magnesium: Int
-    let potassium: Int
-    let zinc: Int
+    let calcium: Double
+    let iodine: Double
+    let iron: Double
+    let magnesium: Double
+    let potassium: Double
+    let zinc: Double
     
     // Vitamins
-    let vitaminA: Int
-    let vitaminC: Int
-    let vitaminD: Int
-    let vitaminE: Int
-    let vitaminK: Int
+    let vitaminA: Double
+    let vitaminC: Double
+    let vitaminD: Double
+    let vitaminE: Double
+    let vitaminK: Double
     let vitaminB1: Double
     let vitaminB2: Double
-    let vitaminB3: Int
-    let vitaminB5: Int
+    let vitaminB3: Double
+    let vitaminB5: Double
     let vitaminB6: Double
-    let vitaminB7: Int
-    let vitaminB9: Int
+    let vitaminB7: Double
+    let vitaminB9: Double
     let vitaminB12: Double
     
     // Computed property to convert Data back to UIImage
@@ -45,7 +45,7 @@ struct MealDataPoint: Codable {
     }
     
     // Initialize from UIImage
-    init(id: UUID = UUID(), image: UIImage?, foodName: String, calories: Int, transFat: Double, saturatedFat: Double, totalFat: Double, protein: Double, sugar: Double, cholesterol: Double, sodium: Int, calcium: Int, iodine: Int, iron: Int, magnesium: Int, potassium: Int, zinc: Int, vitaminA: Int, vitaminC: Int, vitaminD: Int, vitaminE: Int, vitaminK: Int, vitaminB1: Double, vitaminB2: Double, vitaminB3: Int, vitaminB5: Int, vitaminB6: Double, vitaminB7: Int, vitaminB9: Int, vitaminB12: Double) {
+    init(id: UUID = UUID(), image: UIImage?, foodName: String, calories: Double, transFat: Double, saturatedFat: Double, totalFat: Double, protein: Double, sugar: Double, cholesterol: Double, sodium: Double, calcium: Double, iodine: Double, iron: Double, magnesium: Double, potassium: Double, zinc: Double, vitaminA: Double, vitaminC: Double, vitaminD: Double, vitaminE: Double, vitaminK: Double, vitaminB1: Double, vitaminB2: Double, vitaminB3: Double, vitaminB5: Double, vitaminB6: Double, vitaminB7: Double, vitaminB9: Double, vitaminB12: Double) {
         self.id = id
         self.foodName = foodName
         self.calories = calories

@@ -28,38 +28,38 @@ class DiaryDailyDataPoint: Identifiable, ObservableObject {
     var dinner: [MealDataPoint] = []
     
     // basic nutritional information about the food
-    var calories: Int = 0           // in kcal
+    var calories: Double = 0           // in kcal
     var transFat: Double = 0        // in grams g
     var saturatedFat: Double = 0    // in grams g
     var totalFat: Double = 0        // in grams g
     var protein: Double = 0         // in grams g
     var sugar: Double = 0           // in grams g
     var cholesterol: Double = 0     // in milligrams mg
-    var sodium: Int = 0             // in milligrams mg
+    var sodium: Double = 0             // in milligrams mg
     
     // minerals
     // https://nutritionsource.hsph.harvard.edu/vitamins/
-    var calcium: Int = 0            // in milligrams mg
-    var iodine: Int = 0             // in micrograms mcg
-    var iron: Int = 0               // in milligrams mg
-    var magnesium: Int = 0          // in milligrams mg
-    var potassium: Int = 0          // in milligrams mg
-    var zinc: Int = 0               // in milligrams mg
+    var calcium: Double = 0            // in milligrams mg
+    var iodine: Double = 0             // in micrograms mcg
+    var iron: Double = 0               // in milligrams mg
+    var magnesium: Double = 0          // in milligrams mg
+    var potassium: Double = 0          // in milligrams mg
+    var zinc: Double = 0               // in milligrams mg
     
     // vitamins
     // https://www.mealpro.net/blog/13-essential-vitamins/
-    var vitaminA: Int = 0           // in micrograms mcg
-    var vitaminC: Int = 0           // in milligrams mg
-    var vitaminD: Int = 0           // in Internation Units IU
-    var vitaminE: Int = 0           // in milligrams mg
-    var vitaminK: Int = 0           // in milligrams mg
+    var vitaminA: Double = 0           // in micrograms mcg
+    var vitaminC: Double = 0           // in milligrams mg
+    var vitaminD: Double = 0           // in Internation Units IU
+    var vitaminE: Double = 0           // in milligrams mg
+    var vitaminK: Double = 0           // in milligrams mg
     var vitaminB1: Double = 0       // in milligrams mg
     var vitaminB2: Double = 0       // in milligrams mg
-    var vitaminB3: Int = 0          // in milligrams mg
-    var vitaminB5: Int = 0          // in milligrams mg
+    var vitaminB3: Double = 0          // in milligrams mg
+    var vitaminB5: Double = 0          // in milligrams mg
     var vitaminB6: Double = 0       // in milligrams mg
-    var vitaminB7: Int = 0          // in micrograms mcg
-    var vitaminB9: Int = 0          // in micrograms mcg
+    var vitaminB7: Double = 0          // in micrograms mcg
+    var vitaminB9: Double = 0          // in micrograms mcg
     var vitaminB12: Double = 0      // in micrograms mcg
     
     func calculateDailyNutrition() {

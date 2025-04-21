@@ -14,38 +14,71 @@ class BackendFoodProcessor {
     func detectFoods() async throws -> [(Int, Int, Int, Int)] {
         let api = API()
         
+        // Get image dimensions
+        let width = image.size.width
+        let height = image.size.height
+        
         do {
             let regions: [Region] = try await api.upload(image.pngData()!)
             print("Successfully detected food regions!")
             print(regions)
+
             for region in regions {
-                let coords = (region.start.X, region.start.Y, region.end.X, region.end.Y)
+                // Unnormalize
+                let x1 = Int(region.start.X * Double(width))
+                let y1 = Int(region.start.Y * Double(height))
+                let x2 = Int(region.end.X * Double(width))
+                let y2 = Int(region.end.Y * Double(height))
+
+                let coords = (x1, y1, x2, y2)
                 foodRegions.append(coords)
+
                 let mealInfo = region.nutrition
-                let meal = MealDataPoint(image: image, foodName: mealInfo.name, calories: mealInfo.calories, transFat: mealInfo.transFat,
-                                         saturatedFat: mealInfo.saturatedFat, totalFat: mealInfo.totalFat, protein: mealInfo.protein,
-                                         sugar: mealInfo.sugar, cholesterol: mealInfo.cholesterol, sodium: mealInfo.sodium,
-                                         calcium: mealInfo.calcium, iodine: mealInfo.iodine, iron: mealInfo.iron, magnesium: mealInfo.magnesium,
-                                         potassium: mealInfo.potassium, zinc: mealInfo.zinc, vitaminA: mealInfo.vitaminA,
-                                         vitaminC: mealInfo.vitaminC, vitaminD: mealInfo.vitaminD, vitaminE: mealInfo.vitaminE,
-                                         vitaminK: mealInfo.vitaminK, vitaminB1: mealInfo.vitaminB1, vitaminB2: mealInfo.vitaminB2,
-                                         vitaminB3: mealInfo.vitaminB3, vitaminB5: mealInfo.vitaminB5, vitaminB6: mealInfo.vitaminB6,
-                                         vitaminB7: mealInfo.vitaminB7, vitaminB9: mealInfo.vitaminB9, vitaminB12: mealInfo.vitaminB12)
+                let meal = MealDataPoint(
+                    image: image,
+                    foodName: mealInfo.name,
+                    calories: mealInfo.calories,
+                    transFat: mealInfo.transFat,
+                    saturatedFat: mealInfo.saturatedFat,
+                    totalFat: mealInfo.totalFat,
+                    protein: mealInfo.protein,
+                    sugar: mealInfo.sugar,
+                    cholesterol: mealInfo.cholesterol,
+                    sodium: mealInfo.sodium,
+                    calcium: mealInfo.calcium,
+                    iodine: mealInfo.iodine,
+                    iron: mealInfo.iron,
+                    magnesium: mealInfo.magnesium,
+                    potassium: mealInfo.potassium,
+                    zinc: mealInfo.zinc,
+                    vitaminA: mealInfo.vitaminA,
+                    vitaminC: mealInfo.vitaminC,
+                    vitaminD: mealInfo.vitaminD,
+                    vitaminE: mealInfo.vitaminE,
+                    vitaminK: mealInfo.vitaminK,
+                    vitaminB1: mealInfo.vitaminB1,
+                    vitaminB2: mealInfo.vitaminB2,
+                    vitaminB3: mealInfo.vitaminB3,
+                    vitaminB5: mealInfo.vitaminB5,
+                    vitaminB6: mealInfo.vitaminB6,
+                    vitaminB7: mealInfo.vitaminB7,
+                    vitaminB9: mealInfo.vitaminB9,
+                    vitaminB12: mealInfo.vitaminB12
+                )
                 foodInfos.append(meal)
-                
             }
         } catch {
-            
             print(error)
             print("Failed to get food infos")
             throw ParsingError.invalidData
         }
-        
+
         print("returning foodRegions: ")
         print(foodRegions)
 
         return foodRegions
     }
+
     
     func cropSelectedFood(seletedIndices: [Int]) -> [MealDataPoint] {
         // Extract fragments based on the regions

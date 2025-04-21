@@ -98,7 +98,7 @@ struct MealSectionView: View {
 struct FoodItemView: View {
     let foodImage: UIImage  // Food image fragment
     let foodName: String    // Food name
-    let calories: Int      // Food calories
+    let calories: Double      // Food calories
 
     var body: some View {
         HStack {
