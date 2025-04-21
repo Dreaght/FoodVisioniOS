@@ -7,7 +7,7 @@ struct Diary: View {
     @State private var showFoodSelection = false
     @State private var capturedImage: UIImage?
     @State private var selectedRegionIndex: Set<Int> = []
-    @State private var processor: DummyFoodProcessor?
+    @State private var processor: BackendFoodProcessor?
     @State var diaryPage: DiaryDailyDataPoint
     @State private var selectedMeal = ""
     @State private var showDatePicker = false
@@ -102,7 +102,7 @@ struct Diary: View {
                         let img = image.fixOrientation()
                         capturedImage = img
                         showFoodSelection = true
-                        processor = DummyFoodProcessor(frame: img)
+                        processor = BackendFoodProcessor(frame: img)
                         isLoading = true
                     })
                 } else {

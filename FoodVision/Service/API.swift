@@ -13,7 +13,7 @@ extension Data {
 }
 
 class API {
-    let URL_BASE = "http://45.93.136.230:8080"
+    let URL_BASE = "http://45.93.136.230:8081"
     @AppStorage("height") var height = 170
     @AppStorage("currweight") var currweight = 70
     @AppStorage("birthdate") var bday = Date()
@@ -166,30 +166,35 @@ class API {
     }
 
     private func prepareReportPayload(pages: [DiaryDailyDataPoint]) throws -> String {
-        // Create the payload as a string, similar to the payload that curl would send
-        var payload = ""
-        for page in pages {
-            let breakfast = page.breakfast.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-            let lunch = page.lunch.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-            let dinner = page.dinner.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-
-            payload += """
-            Date: \(page.date)
-            Breakfast: \(breakfast)
-            Lunch: \(lunch)
-            Dinner: \(dinner)
-
-            """
+        struct Meal: Codable {
+            let foodName: String
+            let calories: Int
         }
-        return payload
-    }
 
+        struct ReportPage: Codable {
+            let date: String
+            let breakfast: [Meal]
+            let lunch: [Meal]
+            let dinner: [Meal]
+        }
+
+        // Map `DiaryDailyDataPoint` to `ReportPage`
+        let reportPages = pages.map { page in
+            ReportPage(
+                date: page.date,
+                breakfast: page.breakfast.map { Meal(foodName: $0.foodName, calories: $0.calories) },
+                lunch: page.lunch.map { Meal(foodName: $0.foodName, calories: $0.calories) },
+                dinner: page.dinner.map { Meal(foodName: $0.foodName, calories: $0.calories) }
+            )
+        }
+
+        let jsonData = try JSONEncoder().encode(reportPages)
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            throw NSError(domain: "EncodingError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to encode JSON"])
+        }
+
+        return jsonString
+    }
     
     // Helper to handle multiple file uploads with Firebase token
     private func uploadMultiple(_ pages: [DiaryDailyDataPoint], endpoint: String) async throws -> (Data, URLResponse) {
