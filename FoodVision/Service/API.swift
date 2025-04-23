@@ -72,8 +72,8 @@ class API {
         
         return try decoder.decode(UploadResponse.self, from: data).regions
     }
-
-    func chat(_ pages: [DiaryDailyDataPoint]) async throws -> String {
+    
+    func chat(_ pages: [DiaryDailyDataPoint],_ question: String) async throws -> String {
         print("Starting chat")
         
         guard let currentUser = currentUser else {
@@ -82,7 +82,7 @@ class API {
         }
 
         // Prepare the payload (like curl would do)
-        let payload = try prepareChatPayload(pages: pages)
+        let payload = try prepareChatPayload(pages: pages, question: question)
         print(payload)
         let token = try await currentUser.getIDToken(forcingRefresh: false)
         let url = URL(string: "\(URL_BASE)/chat")!
@@ -108,31 +108,6 @@ class API {
         }
     }
 
-    private func prepareChatPayload(pages: [DiaryDailyDataPoint]) throws -> String {
-        // Create the payload as a string for the /chat endpoint
-        var payload = ""
-        for page in pages {
-            let breakfast = page.breakfast.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-            let lunch = page.lunch.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-            let dinner = page.dinner.map { meal in
-                "\(meal.foodName): \(meal.calories) calories"
-            }.joined(separator: ", ")
-
-            payload += """
-            Date: \(page.date)
-            Breakfast: \(breakfast)
-            Lunch: \(lunch)
-            Dinner: \(dinner)
-
-            """
-        }
-        return payload
-    }
-
 
     func report(_ pages: [DiaryDailyDataPoint]) async throws -> UIImage {
         // Upload and get the response data
@@ -142,7 +117,7 @@ class API {
         }
 
         // Prepare the payload as a string (similar to the `curl --data "your_payload"`)
-        let payload = try prepareReportPayload(pages: pages)
+        let payload = try preparePayload(pages: pages)
 
         let token = try await currentUser.getIDToken(forcingRefresh: false)
         let url = URL(string: "\(URL_BASE)/report")!
@@ -169,30 +144,123 @@ class API {
         return image
     }
 
-    private func prepareReportPayload(pages: [DiaryDailyDataPoint]) throws -> String {
-        struct Meal: Codable {
-            let foodName: String
-            let calories: Double
+    private func prepareChatPayload(pages: [DiaryDailyDataPoint], question: String) throws -> String {
+        // Get today's date
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // Prepare the date formatter
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        // Create an array to hold the last 7 days' data
+        var reportPages: [ReportPage] = []
+        
+        // Loop through the last 7 days
+        for i in 0..<7 {
+            // Calculate the date for the current iteration
+            if let date = calendar.date(byAdding: .day, value: -i, to: today) {
+                let dateString = dateFormatter.string(from: date)
+                
+                // Find the corresponding page for that date
+                if let page = pages.first(where: { $0.date == dateString }) {
+                    // If found, map the data
+                    reportPages.append(ReportPage(
+                        pageData: MealsData(
+                            breakfast: page.breakfast.map { MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat, saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein, sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium), calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron), magnesium: Double($0.magnesium), potassium: Double($0.potassium), zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC), vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE), vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2, vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5), vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7), vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) },
+                            lunch: page.lunch.map { MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat, saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein, sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium), calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron), magnesium: Double($0.magnesium), potassium: Double($0.potassium), zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC), vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE), vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2, vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5), vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7), vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) },
+                            dinner: page.dinner.map { MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat, saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein, sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium), calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron), magnesium: Double($0.magnesium), potassium: Double($0.potassium), zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC), vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE), vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2, vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5), vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7), vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) }
+                        ),
+                        date: page.date
+                    ))
+                } else {
+                    // If not found, append an empty pageData
+                    reportPages.append(ReportPage(pageData: MealsData(breakfast: [], lunch: [], dinner: []), date: dateString))
+                }
+            }
         }
-
-        struct ReportPage: Codable {
-            let date: String
-            let breakfast: [Meal]
-            let lunch: [Meal]
-            let dinner: [Meal]
+        
+        // Create a UserProfile instance
+        let userData = populateUserProfile()
+        
+        struct ChatPayload: Codable {
+            let data: [ReportPage]
+            let question: String
+            let userData: UserProfile // Include user data
         }
+        
+        // Create the payload
+        let payload = ChatPayload(data: reportPages, question: question, userData: userData)
+        
+        // Serialize to JSON
+        let jsonData = try JSONEncoder().encode(payload)
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            throw NSError(domain: "EncodingError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to encode JSON"])
+        }
+        
+        return jsonString
+    }
+    
+    func calculateAge(birthDate: Date) -> Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year], from: birthDate, to: Date())
+        return components.year ?? 0
+    }
+    
+    private func preparePayload(pages: [DiaryDailyDataPoint]) throws -> String {
 
+        let userData = populateUserProfile()
         // Map `DiaryDailyDataPoint` to `ReportPage`
         let reportPages = pages.map { page in
             ReportPage(
-                date: page.date,
-                breakfast: page.breakfast.map { Meal(foodName: $0.foodName, calories: $0.calories) },
-                lunch: page.lunch.map { Meal(foodName: $0.foodName, calories: $0.calories) },
-                dinner: page.dinner.map { Meal(foodName: $0.foodName, calories: $0.calories) }
+                pageData: MealsData(breakfast: page.breakfast.map {
+                    MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat,
+                                          saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein,
+                                          sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium),
+                                          calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron),
+                                          magnesium: Double($0.magnesium), potassium: Double($0.potassium),
+                                          zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC),
+                                          vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE),
+                                          vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2,
+                                          vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5),
+                                          vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7),
+                                          vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) },
+                                    lunch: page.lunch.map {
+                                        MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat,
+                                                              saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein,
+                                                              sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium),
+                                                              calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron),
+                                                              magnesium: Double($0.magnesium), potassium: Double($0.potassium),
+                                                              zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC),
+                                                              vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE),
+                                                              vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2,
+                                                              vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5),
+                                                              vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7),
+                                                              vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) },
+                                    dinner: page.dinner.map {
+                                        MealDataPointResponse(name: $0.foodName, calories: Double($0.calories), transFat: $0.transFat,
+                                                              saturatedFat: $0.saturatedFat, totalFat: $0.totalFat, protein: $0.protein,
+                                                              sugar: $0.sugar, cholesterol: $0.cholesterol, sodium: Double($0.sodium),
+                                                              calcium: Double($0.calcium), iodine: Double($0.iodine), iron: Double($0.iron),
+                                                              magnesium: Double($0.magnesium), potassium: Double($0.potassium),
+                                                              zinc: Double($0.zinc), vitaminA: Double($0.vitaminA), vitaminC: Double($0.vitaminC),
+                                                              vitaminD: Double($0.vitaminD), vitaminE: Double($0.vitaminE),
+                                                              vitaminK: Double($0.vitaminK), vitaminB1: $0.vitaminB1, vitaminB2: $0.vitaminB2,
+                                                              vitaminB3: Double($0.vitaminB3), vitaminB5: Double($0.vitaminB5),
+                                                              vitaminB6: $0.vitaminB6, vitaminB7: Double($0.vitaminB7),
+                                                              vitaminB9: Double($0.vitaminB9), vitaminB12: $0.vitaminB12) }),
+                date: page.date
             )
         }
 
-        let jsonData = try JSONEncoder().encode(reportPages)
+        struct ReportPayload: Codable {
+            let data: [ReportPage]
+            let userData: UserProfile
+        }
+        
+        let payload = ReportPayload(data: reportPages, userData: userData)
+        
+        let jsonData = try JSONEncoder().encode(payload)
         guard let jsonString = String(data: jsonData, encoding: .utf8) else {
             throw NSError(domain: "EncodingError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to encode JSON"])
         }
@@ -214,8 +282,6 @@ class API {
             let userProfile = populateUserProfile()
             
             let encoder = JSONEncoder()
-            encoder.keyEncodingStrategy = .convertToSnakeCase
-            
             // Create a combined request object
             let requestBody = ReportRequest(
                 userProfile: userProfile,
@@ -275,7 +341,13 @@ class API {
     }
     
     private func populateUserProfile() -> UserProfile{
-        return UserProfile(height: height, currentWeight: currweight, birthday: bday, gender: gender, targetWeight: targetweight)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: bday)
+        
+        let userData = UserProfile(gender: gender, weight: currweight, height: height, age: calculateAge(birthDate: bday), goalWeight: targetweight, birthDate: dateString)
+        // Map `DiaryDailyDataPoint` to `ReportPage`
+        return userData
     }
     
     private func makePages(pages: [DiaryDailyDataPoint]) -> [DiaryDailyPageForRequest] {
@@ -303,11 +375,23 @@ enum ParsingError: Error {
 }
 
 struct UserProfile: Codable{
-    let height: Int
-    let currentWeight: Int
-    let birthday: Date
     let gender: String
-    let targetWeight: Int
+    let weight: Int
+    let height: Int
+    let age: Int
+    let goalWeight: Int
+    let birthDate: String
+}
+
+struct ReportPage: Codable {
+    let pageData: MealsData
+    let date: String
+}
+
+struct MealsData: Codable {
+    let breakfast: [MealDataPointResponse]
+    let lunch: [MealDataPointResponse]
+    let dinner: [MealDataPointResponse]
 }
 
 struct DiaryDailyPageForRequest: Codable {

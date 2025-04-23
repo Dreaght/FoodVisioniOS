@@ -37,14 +37,14 @@ class ViewModel: ObservableObject {
             isInteractingWithChatGPT: true,
             sendImage: Auth.auth().currentUser?.photoURL,
             sendText: text,
-            responseImage: "AppIcon",
+            responseImage: "botpfp",
             responseText: gptResponse,
             responseError: nil
         )
         self.messages.append(messageRow)
         
         do {
-            let message = await chat()
+            let message = await chat(text: text)
             
             messageRow.responseText = message
             self.messages[self.messages.count - 1] = messageRow
@@ -55,18 +55,15 @@ class ViewModel: ObservableObject {
         isInteractingWithChatGPT = false
     }
     
-    func chat() async -> String {
+
+    func chat(text: String) async -> String {
         
         let api = API()
         
         do {
             // If there are pages, call the API to get the chat message
-            if !pages.isEmpty {
-                let responseMessage = try await api.chat(pages)
-                return responseMessage
-            } else {
-                return "No data found for the past week"
-            }
+            let responseMessage = try await api.chat(pages, text)
+            return responseMessage
             
         } catch {
             print("Error generating chat: \(error)")
